@@ -10,14 +10,185 @@ describe('actium', () => {
   anchor.setProvider(anchor.Provider.env());
   const program = anchor.workspace.Actium as Program<Actium>;
 
+  /* USER TESTS */
+
+  it('can store a new user', async () => {
+    // 'storeUser' instruction execution
+    const user = anchor.web3.Keypair.generate();
+    await program.rpc.storeUser(
+      'Dinu Senal Sendanayake',
+      'Company Admin',
+      '800900',
+      '990230420V',
+      '+94 71 6264322',
+      {
+        accounts: {
+          user: user.publicKey,
+          author: program.provider.wallet.publicKey,
+          systemProgram: anchor.web3.SystemProgram.programId
+        },
+        signers: [user]
+      }
+    );
+    // fetching user details of the created user
+    const userAccount = await program.account.user.fetch(user.publicKey);
+
+    // making sure user account have valid data
+    assert.equal(userAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
+    assert.equal(userAccount.fullName, 'Dinu Senal Sendanayake');
+    assert.equal(userAccount.designation, 'Company Admin');
+    assert.equal(userAccount.licenseNumber, '800900');
+    assert.equal(userAccount.nicNumber, '990230420V');
+    assert.equal(userAccount.contact, '+94 71 6264322');
+    assert.ok(userAccount.timestamp);
+  });
+
+  it('can store a new user without contact', async () => {
+    // 'storeUser' instruction execution
+    const user = anchor.web3.Keypair.generate();
+    await program.rpc.storeUser(
+      'Sachin Umayangana',
+      'Ship Superintendant',
+      '739124',
+      '800340750V',
+      '',
+      {
+        accounts: {
+          user: user.publicKey,
+          author: program.provider.wallet.publicKey,
+          systemProgram: anchor.web3.SystemProgram.programId
+        },
+        signers: [user]
+      }
+    );
+    // fetching user details of the created user
+    const userAccount = await program.account.user.fetch(user.publicKey);
+
+    // making sure userAccount has valid data
+    assert.equal(userAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
+    assert.equal(userAccount.fullName, 'Sachin Umayangana');
+    assert.equal(userAccount.designation, 'Ship Superintendant');
+    assert.equal(userAccount.licenseNumber, '739124');
+    assert.equal(userAccount.nicNumber, '800340750V');
+    assert.equal(userAccount.contact, '');
+    assert.ok(userAccount.timestamp);
+  });
+
+  it('can store a new user from a different user', async () => {
+    // generating a new user and airdroping SOL
+    const newUser = anchor.web3.Keypair.generate();
+    const signature = await program.provider.connection.requestAirdrop(newUser.publicKey, 1000000000);
+    await program.provider.connection.confirmTransaction(signature);
+
+    // 'storeUser' instruction execution for the new user
+    const user = anchor.web3.Keypair.generate();
+    await program.rpc.storeUser(
+      'Manul Thisuraka',
+      'Internal Inspector',
+      '430201',
+      '834322012V',
+      '+74 21 0023341',
+      {
+        accounts: {
+          user: user.publicKey,
+          author: newUser.publicKey,
+          systemProgram: anchor.web3.SystemProgram.programId
+        },
+        signers: [newUser, user]
+      }
+    );
+    // fetching user details of the created user
+    const userAccount = await program.account.user.fetch(user.publicKey);
+
+    // making sure userAccount has valid data
+    assert.equal(userAccount.author.toBase58(), newUser.publicKey.toBase58());
+    assert.equal(userAccount.fullName, 'Manul Thisuraka');
+    assert.equal(userAccount.designation, 'Internal Inspector');
+    assert.equal(userAccount.licenseNumber, '430201');
+    assert.equal(userAccount.nicNumber, '834322012V');
+    assert.equal(userAccount.contact, '+74 21 0023341');
+    assert.ok(userAccount.timestamp);
+  });
+
+  it('cannot provide user name with greater than 50 characters', async () => {
+    // 'storeUser' instruction execution
+    const user = anchor.web3.Keypair.generate();
+    const userNameWith51Chars = 'u'.repeat(51);
+
+    try {
+      await program.rpc.storeUser(
+        userNameWith51Chars,
+        'Service Provider',
+        '723054',
+        '012340120V',
+        '+44 02 434012330',
+        {
+          accounts: {
+            user: user.publicKey,
+            author: program.provider.wallet.publicKey,
+            systemProgram: anchor.web3.SystemProgram.programId
+          },
+          signers: [user]
+        }
+      );
+    } catch (error) {
+      assert.equal(error.msg, 'Only maximum of 50 characters can be provided for the user name');
+      return;
+    }
+    assert.fail('Ought to have a failure becuase entered user name have 51 chars');
+  });
+
+  it('can get all the users', async () => {
+    const userAccounts = await program.account.user.all();
+    assert.equal(userAccounts.length, 3);
+  });
+
+  it('can retrieve user account by author', async () => {
+    const authorPublicKey = program.provider.wallet.publicKey;
+    const userAccounts = await program.account.user.all([
+      {
+        memcmp: {
+          offset: 8, // discriminator
+          bytes: authorPublicKey.toBase58()
+        }
+      }
+    ]);
+
+    assert.equal(userAccounts.length, 2);
+    assert.ok(userAccounts.every(userAccount => {
+      return userAccount.account.author.toBase58() === authorPublicKey.toBase58()
+    }));
+  });
+
+  it('can retrieve users by name', async () => {
+    const userAccounts = await program.account.user.all([
+      {
+        memcmp: {
+          offset: 8 + // discriminator.
+              32 + // author.
+              8 + // timestamp.
+              4, // string prefix.
+          bytes: bs58.encode(Buffer.from('Dinu Senal Sendanayake'))
+        }
+      }
+    ]);
+    
+    assert.equal(userAccounts.length, 1);
+    assert.ok(userAccounts.every(userAccount => {
+      return userAccount.account.fullName === 'Dinu Senal Sendanayake'
+    }));
+  });
+
+  /* VESSEL TESTS */
+
   it('can store a new vessel', async () => {
     // 'storeVessel' instruction execution
     const vessel = anchor.web3.Keypair.generate();
     await program.rpc.storeVessel(
       'vessel #001', 
+      '001001001',
       'Elk, a tanker vessel that belongs to maersk shipping company',
-      'Approved',
-      '90%', 
+      'DNV',
       {
         accounts: {
           vessel: vessel.publicKey,
@@ -33,9 +204,9 @@ describe('actium', () => {
     // making sure vessel account has valid data
     assert.equal(vesselAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
     assert.equal(vesselAccount.vesselName, 'vessel #001');
+    assert.equal(vesselAccount.imoNumber, '001001001');
     assert.equal(vesselAccount.vesselDescription, 'Elk, a tanker vessel that belongs to maersk shipping company');
-    assert.equal(vesselAccount.companyAdminApproval, 'Approved');
-    assert.equal(vesselAccount.seaworthiness, '90%');
+    assert.equal(vesselAccount.shipCompany, 'DNV');
     assert.ok(vesselAccount.timestamp);
   });
 
@@ -44,9 +215,9 @@ describe('actium', () => {
     const vessel = anchor.web3.Keypair.generate();
     await program.rpc.storeVessel(
       '', 
+      '002002002',
       'Echante',
-      'Declined',
-      '0%', 
+      'MORIS',
       {
         accounts: {
           vessel: vessel.publicKey,
@@ -62,20 +233,20 @@ describe('actium', () => {
     // making sure vessel account has valid data
     assert.equal(vesselAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
     assert.equal(vesselAccount.vesselName, '');
+    assert.equal(vesselAccount.imoNumber, '002002002');
     assert.equal(vesselAccount.vesselDescription, 'Echante');
-    assert.equal(vesselAccount.companyAdminApproval, 'Declined');
-    assert.equal(vesselAccount.seaworthiness, '0%');
+    assert.equal(vesselAccount.shipCompany, 'MORIS');
     assert.ok(vesselAccount.timestamp);
   });
 
-  it('can store a new vessel without a description', async () => {
+  it('can store a new vessel without a imo number', async () => {
     // 'storeVessel' instruction execution
     const vessel = anchor.web3.Keypair.generate();
     await program.rpc.storeVessel(
       'vessel #003', 
       '',
-      'Declined',
-      '20%', 
+      'Jo Jo',
+      'Maeserk', 
       {
         accounts: {
           vessel: vessel.publicKey,
@@ -91,9 +262,9 @@ describe('actium', () => {
     // making sure vessel account has valid data
     assert.equal(vesselAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
     assert.equal(vesselAccount.vesselName, 'vessel #003');
-    assert.equal(vesselAccount.vesselDescription, '');
-    assert.equal(vesselAccount.companyAdminApproval, 'Declined');
-    assert.equal(vesselAccount.seaworthiness, '20%');
+    assert.equal(vesselAccount.imoNumber, '');
+    assert.equal(vesselAccount.vesselDescription, 'Jo Jo');
+    assert.equal(vesselAccount.shipCompany, 'Maeserk');
     assert.ok(vesselAccount.timestamp);
   });
 
@@ -107,9 +278,9 @@ describe('actium', () => {
     const vessel = anchor.web3.Keypair.generate();
     await program.rpc.storeVessel(
       'vessel #004',
+      '003003003',
       'Odysseus, bulk career that belongs to danver shipping company',
-      'Approved',
-      '100%',
+      'Maeserk',
       {
         accounts: {
           vessel: vessel.publicKey,
@@ -125,9 +296,9 @@ describe('actium', () => {
     // making sure vessel account has valid data
     assert.equal(vesselAccount.author.toBase58(), newUser.publicKey.toBase58());
     assert.equal(vesselAccount.vesselName, 'vessel #004');
+    assert.equal(vesselAccount.imoNumber, '003003003');
     assert.equal(vesselAccount.vesselDescription, 'Odysseus, bulk career that belongs to danver shipping company');
-    assert.equal(vesselAccount.companyAdminApproval, 'Approved');
-    assert.equal(vesselAccount.seaworthiness, '100%');
+    assert.equal(vesselAccount.shipCompany, 'Maeserk');
   });
   
   it('cannot provide vessel name with greater than 50 characters', async () => {
@@ -136,9 +307,9 @@ describe('actium', () => {
       const vesselNameWith51Chars = 'v'.repeat(51);
       await program.rpc.storeVessel(
         vesselNameWith51Chars,
+        '004004004',
         'Babylon, vessel career that belongs to DNV shipping company',
-        'Approved',
-        '60%',
+        'Sea Line',
         {
           accounts: {
             vessel: vessel.publicKey,
@@ -161,9 +332,9 @@ describe('actium', () => {
       const vesselDescWith121Chars = 'v'.repeat(121);
       await program.rpc.storeVessel(
         '2Leavs',
+        '005005005',
         vesselDescWith121Chars,
-        'Approved',
-        '70%',
+        'UIO',
         {
           accounts: {
             vessel: vessel.publicKey,
@@ -185,7 +356,7 @@ describe('actium', () => {
     assert.equal(vesselAccounts.length, 4);
   })
 
-  it('can retrieve account by author', async () => {
+  it('can retrieve vessel account by author', async () => {
     const authorPublicKey = program.provider.wallet.publicKey
     const vesselAccounts = await program.account.vessel.all([
       {
@@ -198,7 +369,7 @@ describe('actium', () => {
     assert.equal(vesselAccounts.length, 3);
     assert.ok(vesselAccounts.every(vesselAccount => {
       return vesselAccount.account.author.toBase58() === authorPublicKey.toBase58()
-    }))
+    }));
   });
 
   it('can retrieve vessels by name', async () => {
@@ -208,7 +379,7 @@ describe('actium', () => {
                 offset: 8 + // discriminator.
                     32 + // author public key.
                     8 + // timestamp.
-                    4, // string prefix
+                    4, // string prefix.
                 bytes: bs58.encode(Buffer.from('vessel #003')),
             }
         }
@@ -218,6 +389,6 @@ describe('actium', () => {
     assert.ok(vesselAccounts.every(vesselAccount => {
         return vesselAccount.account.vesselName === 'vessel #003'
     }))
-});
+  });
 
 });
