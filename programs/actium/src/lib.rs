@@ -77,6 +77,29 @@ pub mod actium {
         vessel.ship_company = ship_company;
         Ok(())
     }
+    // company admin record
+    pub fn store_company_admin_record(
+        ctx: Context<StoreCompanyAdminRecord>,
+        approval: String,
+        comment: String
+    ) -> ProgramResult {
+        let companyadminrecord: &mut Account<CompanyAdminRecord> = &mut ctx.accounts.companyadminrecord;
+        let author: &Signer = &ctx.accounts.author;
+        let clock: Clock = Clock::get().unwrap();
+
+        if approval.chars().count() > 8 {
+            return Err(ErrorConfig::CompanyAdminApprovalTooLong.into())
+        }
+        if comment.chars().count() > 50 {
+            return Err(ErrorConfig::CompanyAdminCommentTooLong.into())
+        }
+
+        companyadminrecord.author = *author.key;
+        companyadminrecord.timestamp = clock.unix_timestamp;
+        companyadminrecord.approval = approval;
+        companyadminrecord.comment = comment;
+        Ok(())
+    }
 }
 
 /* ACCOUNTS */
@@ -97,6 +120,17 @@ pub struct StoreUser<'info> {
 pub struct StoreVessel<'info> {
     #[account(init, payer = author, space = Vessel::LEN)]
     pub vessel: Account<'info, Vessel>,
+    #[account(mut)]
+    pub author: Signer<'info>,
+    #[account(address = system_program::ID)]
+    pub system_program: AccountInfo<'info>
+}
+
+// company admin record
+#[derive(Accounts)]
+pub struct StoreCompanyAdminRecord<'info> {
+    #[account(init, payer = author, space = CompanyAdminRecord::LEN)]
+    pub companyadminrecord: Account<'info, CompanyAdminRecord>,
     #[account(mut)]
     pub author: Signer<'info>,
     #[account(address = system_program::ID)]
@@ -128,6 +162,16 @@ pub struct Vessel {
     pub ship_company: String,
 }
 
+// structure of company admin record account
+#[account]
+pub struct CompanyAdminRecord {
+    pub author: Pubkey,
+    pub timestamp: i64,
+    pub approval: String,
+    pub comment: String,
+    /* pub vessel_address: Pubkey */
+}
+
 /* SIZING OF ACCOUNTS */
 
 // configuring constant for sizing the account
@@ -146,17 +190,10 @@ const MAX_VESSEL_NAME_LENGTH: usize = 50 * 4; // stores maximum 50 chars
 const MAX_IMO_NUMBER_LENGTH: usize = 20 * 4; // stores maximum 20 chars
 const MAX_VESSEL_DESC_LENGTH: usize = 120 * 4; // stores maximum 120 chars
 const MAX_SHIPCOMPANY_LENGTH: usize = 20 * 4; // stores maximum 20 chars
+// company admin record constants
+const MAX_APPROVAL_LENGTH: usize = 8 * 4; // stores maximum 8 chars
+const MAX_CADMIN_COMMENT_LENGTH: usize = 50 * 4; // stores maximum 50 chars
 
-// configuring total size of the vessel account
-impl Vessel { 
-    const LEN: usize = DISCRIMINATOR_LENGTH
-        + PUBLIC_KEY_LENGTH // author
-        + TIMESTAMP_LENGTH // timestamp
-        + PREFIXED_STRING_LENGTH + MAX_VESSEL_NAME_LENGTH // vessel name
-        + PREFIXED_STRING_LENGTH + MAX_IMO_NUMBER_LENGTH // imo number
-        + PREFIXED_STRING_LENGTH + MAX_VESSEL_DESC_LENGTH // vessel description
-        + PREFIXED_STRING_LENGTH + MAX_SHIPCOMPANY_LENGTH; // ship company
-}
 // configuring total size of the user account
 impl User {
     const LEN: usize = DISCRIMINATOR_LENGTH
@@ -167,6 +204,24 @@ impl User {
         + PREFIXED_STRING_LENGTH + MAX_LICENSE_NUMBER_LENGTH // license number
         + PREFIXED_STRING_LENGTH + MAX_NIC_NUMBER_LENGTH // nic number
         + PREFIXED_STRING_LENGTH + MAX_CONTACT_LENGTH; // contact
+}
+// configuring total size of the vessel account
+impl Vessel { 
+    const LEN: usize = DISCRIMINATOR_LENGTH
+        + PUBLIC_KEY_LENGTH // author
+        + TIMESTAMP_LENGTH // timestamp
+        + PREFIXED_STRING_LENGTH + MAX_VESSEL_NAME_LENGTH // vessel name
+        + PREFIXED_STRING_LENGTH + MAX_IMO_NUMBER_LENGTH // imo number
+        + PREFIXED_STRING_LENGTH + MAX_VESSEL_DESC_LENGTH // vessel description
+        + PREFIXED_STRING_LENGTH + MAX_SHIPCOMPANY_LENGTH; // ship company
+}
+// configuring total size of the company admin record account
+impl CompanyAdminRecord {
+    const LEN: usize = DISCRIMINATOR_LENGTH
+        + PUBLIC_KEY_LENGTH // author
+        + TIMESTAMP_LENGTH // timestamp
+        + PREFIXED_STRING_LENGTH + MAX_APPROVAL_LENGTH // company admin approval
+        + PREFIXED_STRING_LENGTH + MAX_CADMIN_COMMENT_LENGTH; // company admin comment
 }
 
 #[error]
@@ -191,4 +246,9 @@ pub enum ErrorConfig {
     VesselDescTooLong,
     #[msg("Only maximum of 20 characters can be provided for the ship company")]
     ShipCompanyNameTooLong,
+    // company admin record errors
+    #[msg("Only maximum of 8 characters can be provided for the company admin approval")]
+    CompanyAdminApprovalTooLong,
+    #[msg("Only maximum of 50 characters can be provided for the company admin comment")]
+    CompanyAdminCommentTooLong,
 }

@@ -391,4 +391,131 @@ describe('actium', () => {
     }))
   });
 
+  /* COMPANY ADMIN RECORD TESTS */
+  
+  it('can store a new company admin records', async () => {
+    // 'storeCompanyAdminRecord' instruction execution
+    const companyAdminRecord = anchor.web3.Keypair.generate();
+    await program.rpc.storeCompanyAdminRecord(
+      'approved',
+      'maintenance phase one completed',
+      {
+        accounts: {
+          companyadminrecord: companyAdminRecord.publicKey,
+          author: program.provider.wallet.publicKey,
+          systemProgram: anchor.web3.SystemProgram.programId
+        },
+        signers: [companyAdminRecord]
+      }
+    );
+    // fetching account details of the created company admin record
+    const companyAdminRecordAccount = await program.account.companyAdminRecord.fetch(companyAdminRecord.publicKey);
+
+    // making sure company admin record account has valid data
+    assert.equal(companyAdminRecordAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
+    assert.equal(companyAdminRecordAccount.approval, 'approved');
+    assert.equal(companyAdminRecordAccount.comment, 'maintenance phase one completed');
+    assert.ok(companyAdminRecordAccount.timestamp);
+  });
+
+  it('can store a new company record without comment', async () => {
+    // 'storeCompanyAdminRecord' instruction execution
+    const companyAdminRecord = anchor.web3.Keypair.generate();
+    await program.rpc.storeCompanyAdminRecord(
+      'approved',
+      '',
+      {
+        accounts: {
+          companyadminrecord: companyAdminRecord.publicKey,
+          author: program.provider.wallet.publicKey,
+          systemProgram: anchor.web3.SystemProgram.programId
+        },
+        signers: [companyAdminRecord]
+      }
+    );
+    // fetching account details of the created company admin record
+    const companyAdminRecordAccount = await program.account.companyAdminRecord.fetch(companyAdminRecord.publicKey);
+
+    // making sure company admin record account has valid data
+    assert.equal(companyAdminRecordAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
+    assert.equal(companyAdminRecordAccount.approval, 'approved');
+    assert.equal(companyAdminRecordAccount.comment, '');
+    assert.ok(companyAdminRecordAccount.timestamp);
+  });
+
+  it('can store a new company admin record from a different author', async () => {
+    // generating a new user and airdropping SOL
+    const newUser = anchor.web3.Keypair.generate();
+    const signature = await program.provider.connection.requestAirdrop(newUser.publicKey, 1000000000);
+    await program.provider.connection.confirmTransaction(signature);
+
+    // 'storeCompanyAdminRecord' instruction execution
+    const companyAdminRecord = anchor.web3.Keypair.generate();
+    await program.rpc.storeCompanyAdminRecord(
+     'declined',
+     'Propler requirements',
+     {
+       accounts: {
+         companyadminrecord: companyAdminRecord.publicKey,
+         author: newUser.publicKey,
+         systemProgram: anchor.web3.SystemProgram.programId
+       },
+       signers: [newUser, companyAdminRecord]
+     }
+    );
+    // fetching account details of the created company admin record
+    const companyAdminRecordAccount = await program.account.companyAdminRecord.fetch(companyAdminRecord.publicKey);
+
+    // making sure company admin record account has valid data
+    assert.equal(companyAdminRecordAccount.author.toBase58(), newUser.publicKey.toBase58());
+    assert.equal(companyAdminRecordAccount.approval, 'declined');
+    assert.equal(companyAdminRecordAccount.comment, 'Propler requirements');
+    assert.ok(companyAdminRecordAccount.timestamp);
+  });
+
+  it('cannot provide company admin approval with greater than 8 characters', async () => {
+    // 'storeCompanyAdminRecord' instruction execution
+    const companyAdminRecord = anchor.web3.Keypair.generate();
+    const cAdminApprovalWith9Chars = 'a'.repeat(9);
+
+    try {
+      await program.rpc.storeCompanyAdminRecord(
+        cAdminApprovalWith9Chars,
+        'Not maintained properly', {
+          accounts: {
+            companyadminrecord: companyAdminRecord.publicKey,
+            author: program.provider.wallet.publicKey,
+            systemProgram: anchor.web3.SystemProgram.programId
+          },
+          signers: [companyAdminRecord]
+        }
+      )
+    } catch (error) {
+      assert.equal(error.msg, 'Only maximum of 8 characters can be provided for the company admin approval');
+      return;
+    }
+    assert.fail('Ought to have a failure becuase entered company approval have 9 chars');
+  });
+
+  it('can get all the company admin records', async () => {
+    const companyAdminRecordAccounts = await program.account.companyAdminRecord.all();
+    assert.equal(companyAdminRecordAccounts.length, 3);
+  });
+
+  it('can retrieve company admin records by author', async () => {
+    const authorPublicKey = await program.provider.wallet.publicKey;
+    const companyAdminRecordAccounts = await program.account.companyAdminRecord.all([
+      {
+        memcmp: {
+          offset: 8, // discriminator
+          bytes: authorPublicKey.toBase58()
+        }
+      }
+    ]);
+    assert.equal(companyAdminRecordAccounts.length, 2);
+    assert.ok(companyAdminRecordAccounts.every(companyAdminRecordAccount => {
+      return companyAdminRecordAccount.account.author.toBase58() === authorPublicKey.toBase58()
+    }));
+  });
+
 });
