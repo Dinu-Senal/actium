@@ -1,0 +1,270 @@
+{
+    "version": "0.1.0",
+    "name": "actium",
+    "instructions": [
+      {
+        "name": "storeUser",
+        "accounts": [
+          {
+            "name": "user",
+            "isMut": true,
+            "isSigner": true
+          },
+          {
+            "name": "author",
+            "isMut": true,
+            "isSigner": true
+          },
+          {
+            "name": "systemProgram",
+            "isMut": false,
+            "isSigner": false
+          }
+        ],
+        "args": [
+          {
+            "name": "userName",
+            "type": "string"
+          },
+          {
+            "name": "designation",
+            "type": "string"
+          },
+          {
+            "name": "licenseNumber",
+            "type": "string"
+          },
+          {
+            "name": "nicNumber",
+            "type": "string"
+          },
+          {
+            "name": "contact",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "storeVessel",
+        "accounts": [
+          {
+            "name": "vessel",
+            "isMut": true,
+            "isSigner": true
+          },
+          {
+            "name": "author",
+            "isMut": true,
+            "isSigner": true
+          },
+          {
+            "name": "systemProgram",
+            "isMut": false,
+            "isSigner": false
+          }
+        ],
+        "args": [
+          {
+            "name": "vesselName",
+            "type": "string"
+          },
+          {
+            "name": "imoNumber",
+            "type": "string"
+          },
+          {
+            "name": "vesselDescription",
+            "type": "string"
+          },
+          {
+            "name": "shipCompany",
+            "type": "string"
+          }
+        ]
+      },
+      {
+        "name": "storeCompanyAdminRecord",
+        "accounts": [
+          {
+            "name": "companyadminrecord",
+            "isMut": true,
+            "isSigner": true
+          },
+          {
+            "name": "author",
+            "isMut": true,
+            "isSigner": true
+          },
+          {
+            "name": "systemProgram",
+            "isMut": false,
+            "isSigner": false
+          }
+        ],
+        "args": [
+          {
+            "name": "approval",
+            "type": "string"
+          },
+          {
+            "name": "comment",
+            "type": "string"
+          }
+        ]
+      }
+    ],
+    "accounts": [
+      {
+        "name": "User",
+        "type": {
+          "kind": "struct",
+          "fields": [
+            {
+              "name": "author",
+              "type": "publicKey"
+            },
+            {
+              "name": "timestamp",
+              "type": "i64"
+            },
+            {
+              "name": "fullName",
+              "type": "string"
+            },
+            {
+              "name": "designation",
+              "type": "string"
+            },
+            {
+              "name": "licenseNumber",
+              "type": "string"
+            },
+            {
+              "name": "nicNumber",
+              "type": "string"
+            },
+            {
+              "name": "contact",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "name": "Vessel",
+        "type": {
+          "kind": "struct",
+          "fields": [
+            {
+              "name": "author",
+              "type": "publicKey"
+            },
+            {
+              "name": "timestamp",
+              "type": "i64"
+            },
+            {
+              "name": "vesselName",
+              "type": "string"
+            },
+            {
+              "name": "imoNumber",
+              "type": "string"
+            },
+            {
+              "name": "vesselDescription",
+              "type": "string"
+            },
+            {
+              "name": "shipCompany",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      {
+        "name": "CompanyAdminRecord",
+        "type": {
+          "kind": "struct",
+          "fields": [
+            {
+              "name": "author",
+              "type": "publicKey"
+            },
+            {
+              "name": "timestamp",
+              "type": "i64"
+            },
+            {
+              "name": "approval",
+              "type": "string"
+            },
+            {
+              "name": "comment",
+              "type": "string"
+            }
+          ]
+        }
+      }
+    ],
+    "errors": [
+      {
+        "code": 6000,
+        "name": "UserNameTooLong",
+        "msg": "Only maximum of 50 characters can be provided for the user name"
+      },
+      {
+        "code": 6001,
+        "name": "UserDesignationTooLong",
+        "msg": "Only maximum of 20 characters can be provided for the user designation"
+      },
+      {
+        "code": 6002,
+        "name": "UserLicenseNumberTooLong",
+        "msg": "Only maximum of 20 characters can be provided for the user license number"
+      },
+      {
+        "code": 6003,
+        "name": "UserNICNumberTooLong",
+        "msg": "Only maximum of 15 characters can be provided for the user nic number"
+      },
+      {
+        "code": 6004,
+        "name": "UserContactTooLong",
+        "msg": "Only maximum of 20 characters can be provided for the user contact"
+      },
+      {
+        "code": 6005,
+        "name": "VesselNameTooLong",
+        "msg": "Only maximum of 50 characters can be provided for the vessel name"
+      },
+      {
+        "code": 6006,
+        "name": "IMONumberTooLong",
+        "msg": "Only maximum of 20 characters can be provided for the imo number"
+      },
+      {
+        "code": 6007,
+        "name": "VesselDescTooLong",
+        "msg": "Only maximum of 120 characters can be provided for the vessel description"
+      },
+      {
+        "code": 6008,
+        "name": "ShipCompanyNameTooLong",
+        "msg": "Only maximum of 20 characters can be provided for the ship company"
+      },
+      {
+        "code": 6009,
+        "name": "CompanyAdminApprovalTooLong",
+        "msg": "Only maximum of 8 characters can be provided for the company admin approval"
+      },
+      {
+        "code": 6010,
+        "name": "CompanyAdminCommentTooLong",
+        "msg": "Only maximum of 50 characters can be provided for the company admin comment"
+      }
+    ],
+    "metadata": {
+      "address": "4MzsanEXKmTtjA3t9eLDC7YUfAyf8Wp9m9vTKTvPSSqL"
+    }
+}
