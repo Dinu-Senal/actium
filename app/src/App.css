@@ -1,3 +1,79 @@
 .App {
   text-align: center;
+  font-family: 'Jost', sans-serif;
+  overflow-y: hidden;
 }
+
+.table {
+  width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.scrollable-table {
+  position: relative;
+  height: 400px;
+  overflow: scroll;
+  overflow-x: hidden;
+}
+
+.main-center-container {
+  justify-content: center;
+  align-items: center;
+  margin: 10rem 0 5rem 0;
+}
+
+.main-center-container-sm {
+  justify-content: center;
+  align-items: center;
+  margin: 5px 0 0 0;
+}
+
+.inline-row {
+  display: inline-flex;
+}
+
+.landing-text {
+  font-size: 5rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.actium-main-button {
+  cursor: pointer !important;
+  background: #29707E;
+  text-transform: uppercase;
+  color: #FFF;
+  border: none;
+  padding: 5px 15px 5px 15px;
+}
+
+.actium-main-button:hover {
+  background: #15383E;
+}
+
+/* wallet styles */
+
+.wallet-container {
+  display: flex;
+  justify-content: center;
+}
+
+.wallet-adapter-button-trigger {
+  background: #29707E !important;
+  color: #FFF;
+  border-radius: 0px !important;
+  padding: 7px 15px 7px 15px !important;
+  display: flex !important;
+  font-family: 'Jost', sans-serif !important;
+  font-size: initial;
+  font-weight: inherit !important;
+  height: inherit !important;
+  line-height: inherit !important;
+  text-transform: uppercase;
+}
+
+.wallet-adapter-button:hover {
+  background: #15383E !important;
+}
+

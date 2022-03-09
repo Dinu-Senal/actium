@@ -393,7 +393,7 @@ describe('actium', () => {
 
   /* COMPANY ADMIN RECORD TESTS */
   
-  it('can store a new company admin records', async () => {
+  it('can store a new company admin record', async () => {
     // 'storeCompanyAdminRecord' instruction execution
     const companyAdminRecord = anchor.web3.Keypair.generate();
     await program.rpc.storeCompanyAdminRecord(
@@ -516,6 +516,128 @@ describe('actium', () => {
     assert.ok(companyAdminRecordAccounts.every(companyAdminRecordAccount => {
       return companyAdminRecordAccount.account.author.toBase58() === authorPublicKey.toBase58()
     }));
+  });
+
+  /* VALIDATOR RECORD TESTS */
+
+  it('can store a new validator record', async () => {
+    // 'storeValidatorRecord' instruction execution
+    const validatorRecord = anchor.web3.Keypair.generate();
+    await program.rpc.storeValidatorRecord(
+      'ship superintendent',
+      'yes',
+      'maintained the vessel propler correctly',
+      {
+        accounts : {
+          validatorrecord: validatorRecord.publicKey,
+          author: program.provider.wallet.publicKey,
+          systemProgram: anchor.web3.SystemProgram.programId
+        },
+        signers: [validatorRecord]
+      }
+    );
+   // fetching account details of the created validator record
+   const validatorRecordAccount = await program.account.validatorRecord.fetch(validatorRecord.publicKey);
+
+   // making sure company admin record account has valid data
+   assert.equal(validatorRecordAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
+   assert.equal(validatorRecordAccount.validatorDesignation, 'ship superintendent');
+   assert.equal(validatorRecordAccount.validated, 'yes');
+   assert.equal(validatorRecordAccount.vComment, 'maintained the vessel propler correctly');
+   assert.ok(validatorRecordAccount.timestamp);
+  });
+
+  /* SERVICE PROVIDER RECORD TESTS */
+
+  it('can store a new service provider record', async () => {
+    // 'storeServiceProviderRecord' instruction execution
+    const serviceProviderRecord = anchor.web3.Keypair.generate();
+    await program.rpc.storeServiceProviderRecord(
+      'HKS',
+      '#432 123',
+      'Durable',
+      '10/10/2022',
+      '309123',
+      {
+        accounts : {
+          serviceproviderrecord: serviceProviderRecord.publicKey,
+          author: program.provider.wallet.publicKey,
+          systemProgram: anchor.web3.SystemProgram.programId
+        },
+        signers: [serviceProviderRecord]
+      }
+    );
+   // fetching account details of the created validator record
+   const serviceProviderRecordAccount = await program.account.serviceProviderRecord.fetch(serviceProviderRecord.publicKey);
+
+   // making sure company admin record account has valid data
+   assert.equal(serviceProviderRecordAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
+   assert.equal(serviceProviderRecordAccount.providerName, 'HKS');
+   assert.equal(serviceProviderRecordAccount.partId, '#432 123');
+   assert.equal(serviceProviderRecordAccount.partDescription, 'Durable');
+   assert.equal(serviceProviderRecordAccount.datePurchased, '10/10/2022');
+   assert.equal(serviceProviderRecordAccount.warrantyCode, '309123');
+   assert.ok(serviceProviderRecordAccount.timestamp);
+  });
+
+  /* INSPECTOR RECORD TESTS */  
+
+  it('can store a new inspector record', async () => {
+    // 'storeInspectorRecord' instruction execution
+    const inspectorRecord = anchor.web3.Keypair.generate();
+    await program.rpc.storeInspectorRecord(
+      'Manul',
+      'yes',
+      'have to do more repairs',
+      {
+        accounts : {
+          inspectorrecord: inspectorRecord.publicKey,
+          author: program.provider.wallet.publicKey,
+          systemProgram: anchor.web3.SystemProgram.programId
+        },
+        signers: [inspectorRecord]
+      }
+    );
+    // fetching account details of the created inspector record
+    const inspectorRecordAccount = await program.account.inspectorRecord.fetch(inspectorRecord.publicKey);
+
+    // making sure inspector record account has valid data
+    assert.equal(inspectorRecordAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
+    assert.equal(inspectorRecordAccount.inspectorName, 'Manul');
+    assert.equal(inspectorRecordAccount.inspected, 'yes');
+    assert.equal(inspectorRecordAccount.iComment, 'have to do more repairs');
+    assert.ok(inspectorRecordAccount.timestamp);
+  });
+
+  /* DELIVERY SERVICE RECORD TESTS */
+
+  it('can store a new delivery service record', async () => {
+    // 'storeDeliveryServiceRecord' instruction execution
+    const deliveryServiceRecord = anchor.web3.Keypair.generate();
+    await program.rpc.storeDeliveryServiceRecord(
+      'New Line',
+      'Colombo Port',
+      '12/12/2022',
+      'UOA12',
+      {
+        accounts : {
+          deliveryservicerecord: deliveryServiceRecord.publicKey,
+          author: program.provider.wallet.publicKey,
+          systemProgram: anchor.web3.SystemProgram.programId
+        },
+        signers: [deliveryServiceRecord]
+      }
+    );
+    // fetching account details of the created delivery service record
+    const deliveryServiceRecordAccount = await program.account.deliveryServiceRecord.fetch(deliveryServiceRecord.publicKey);
+
+    // making sure delivery service record account has valid data
+    assert.equal(deliveryServiceRecordAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
+    assert.equal(deliveryServiceRecordAccount.serviceName, 'New Line');
+    assert.equal(deliveryServiceRecordAccount.deliveredAddress, 'Colombo Port');
+    assert.equal(deliveryServiceRecordAccount.deliveredDate, '12/12/2022');
+    assert.equal(deliveryServiceRecordAccount.warehouse, 'UOA12');
+    assert.ok(deliveryServiceRecordAccount.timestamp);
   });
 
 });
