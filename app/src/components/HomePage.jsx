@@ -12,37 +12,31 @@ const wallets = [
 
 const HomePage = () => {
     const [ vesselData, setVesselData ] = useState([]);
+    const [ dataLoaded, setDataLoaded ] = useState(false);
+    const [ isModalOpen, setIsModalOpen ] = useState(false);
     const wallet = useWallet();
 
-    useEffect(() => {
-        const loadVessel = async () => {
-            const vessel = await getVessels(wallet);
-            setVesselData(vessel);
-        }
-        loadVessel();
-    }, [wallet]);
-
-    const refresh = (val) => {
-        if(val === "refresh") {
-            const loadVessel = async () => {
-                const vessel = await getVessels(wallet);
-                setVesselData(vessel);
-            }
-            loadVessel();
-        }
+    const loadVessel = async () => {
+        const vessel = await getVessels(wallet);
+        setVesselData(vessel);
     }
+
+    useEffect(() => {
+        loadVessel();
+        setDataLoaded(false);
+    }, [wallet, dataLoaded]);
 
     const renderVessels = () => {
         if(vesselData.length !== 0) {
             return (
                 <div className="scrollable-table">
-                    <table className="table table-bordered">
+                    <table className="table" style={{border: "none"}}>
                         <thead>
                             <tr>
-                              <th scope="col">Vessel Name</th>
-                              <th scope="col">IMO Number</th>
-                              <th scope="col">Vessel Description</th>
-                              <th scope="col">Ship Company</th>
+                              <th className="table-heading" scope="col">Vessel Name</th>
+                              <th className="table-heading" scope="col">IMO Number</th>
+                              <th className="table-heading" scope="col">Vessel Description</th>
+                              <th className="table-heading" scope="col">Ship Company</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -76,17 +70,22 @@ const HomePage = () => {
         );
     } else {
         return (
-            <div className="main-center-container-sm my-5">
-                <div className="inline-row">
+            <div className={`${isModalOpen && "primary-container"} main-center-container-sm`}>
+                <div className="inline-row mt-4">
                     <button 
                         className="actium-main-button" 
-                        data-toggle="modal" 
-                        data-target="#storeVesselModal">Add Vessels</button>
+                        onClick={() => setIsModalOpen(true)}>Add Vessels</button>
                     <div className="ml-2">
                         <WalletMultiButton />
                     </div>
                 </div>
-                <AddVessel wallet={wallet} refresh={refresh} />
+                {isModalOpen && 
+                    <AddVessel 
+                        wallet={wallet} 
+                        dataLoading={loaded => setDataLoaded(loaded)}
+                        closeModal={setIsModalOpen}
+                    />
+                }
                 <div className="my-3">
                     {renderVessels()}
                 </div>

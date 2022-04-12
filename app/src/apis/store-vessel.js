@@ -31,6 +31,7 @@ export const storeVessel = async (
           }
         );
         await program.account.vessel.fetch(vessel.publicKey);
+        return true;
     } catch (err) {
         console.log("Transaction error: ", err);
     }
