@@ -3,7 +3,9 @@
   font-family: 'Jost', sans-serif;
   overflow-y: hidden;
 }
-
+a:hover {
+  text-decoration: none;
+}
 /* table */
 .table {
   width: 700px;
@@ -45,14 +47,29 @@
   display: inline-flex;
 }
 
+/* cards */
+.primary-card {
+  background: #FFFFFF;
+  width: 700px;
+  margin: auto;
+  border-radius: 25px;
+}
+
 /* text */
 .landing-text {
-  font-size: 5rem;
+  font-size: 3rem;
   font-weight: 500;
   text-transform: uppercase;
 }
 .error-text {
   color: #DA1212;
+}
+.error-msg {
+  background: #DA1212;
+  text-transform: uppercase;
+  color: #000;
+  border: none;
+  padding: 5px 15px 5px 15px;
 }
 
 /* buttons */

@@ -56,42 +56,36 @@ const HomePage = () => {
             )
         }
     }
-    
-    if(!wallet.connected) {
-        return (
-            <div className="main-center-container">
-                <div>
-                    Connect your wallet to start adding vessels
-                </div>
-                <div className="wallet-container">
+    return (
+        <div className={`${isModalOpen && "primary-container"} main-center-container-sm`}>
+            <div className="inline-row mt-4">
+                {(!wallet.connected) ? (
+                    <div className="error-msg" >
+                        Connect to Add Vessels
+                    </div>
+                ) : 
+                    <button 
+                        className="actium-main-button" 
+                        onClick={() => setIsModalOpen(true)}>
+                            Add Vessels
+                    </button>
+                }
+                <div className="ml-2">
                     <WalletMultiButton />
                 </div>
             </div>
-        );
-    } else {
-        return (
-            <div className={`${isModalOpen && "primary-container"} main-center-container-sm`}>
-                <div className="inline-row mt-4">
-                    <button 
-                        className="actium-main-button" 
-                        onClick={() => setIsModalOpen(true)}>Add Vessels</button>
-                    <div className="ml-2">
-                        <WalletMultiButton />
-                    </div>
-                </div>
-                {isModalOpen && 
-                    <AddVessel 
-                        wallet={wallet} 
-                        dataLoading={loaded => setDataLoaded(loaded)}
-                        closeModal={setIsModalOpen}
-                    />
-                }
-                <div className="my-3">
-                    {renderVessels()}
-                </div>
+            {isModalOpen && 
+                <AddVessel 
+                    wallet={wallet} 
+                    dataLoading={loaded => setDataLoaded(loaded)}
+                    closeModal={setIsModalOpen}
+                />
+            }
+            <div className="my-3">
+                {renderVessels()}
             </div>
-        );
-    }
+        </div>
+    );
 }
 
 const ConnectedHomePage = () => {
