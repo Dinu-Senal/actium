@@ -1,14 +1,15 @@
 import dayjs from 'dayjs';
 
-export class Vessel {
+export class Inspection {
     constructor (publicKey, accountData) {
         this.publicKey = publicKey
         this.author = accountData.author
         this.timestamp = accountData.timestamp.toString()
-        this.vessel_name = accountData.vesselName
-        this.imo_number = accountData.imoNumber
-        this.vessel_description = accountData.vesselDescription
-        this.ship_company = accountData.shipCompany
+        this.inspector_name = accountData.inspectorName
+        this.inspected = accountData.inspected
+        this.i_comment = accountData.iComment
+        this.maintenance_batch = accountData.maintenanceBatch
+        this.vessel_part_id_fkey = accountData.vesselPartIdFkey
     }
 
     get key() {

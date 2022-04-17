@@ -16,13 +16,17 @@ export class User {
         return this.publicKey.toBase58()
     }
 
+    get author_key() {
+        return this.author.toBase58()
+    }
+
     get author_display() {
         const author = this.author.toBase58()
         return author.slice(0,4) + '..' + author.slice(-4)
     }
 
     get created_at() {
-        return dayjs.unix(this.timestamp).format('lll')
+        return dayjs.unix(this.timestamp).format('DD/MM/YYYY')
     }
 
     get created_ago() {

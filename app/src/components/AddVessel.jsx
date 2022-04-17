@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { getVessels } from '../apis/get-vessels';
 import { storeVessel } from '../apis/store-vessel';
 
 const AddVessel  = ({ wallet, dataLoading, closeModal }) => {
@@ -9,26 +10,46 @@ const AddVessel  = ({ wallet, dataLoading, closeModal }) => {
         vessel_description: "",
         ship_company: ""
     };
+    const [ blockchainVesselData, setBlockchainVesselData ] = useState([]);
     const [ vesselData, setVesselData ] = useState(initialValues);
     const [ formErrors, setFormErrors ] = useState({});
 
     const [ isSubmit, setIsSubmit ] = useState(false);
     const [ isStoringSuccess, setIsStoringSuccess ] = useState(false);
 
+    const loadVessel = async () => {
+        const vessels = await getVessels(wallet);
+        setBlockchainVesselData(vessels);
+    }
+
+    useEffect(() => {
+        loadVessel();
+    }, [wallet] );
+
     useEffect(() => {
         if(Object.keys(formErrors).length === 0 && isSubmit) {
-            const loadVessel = async() => {
-                const response = await storeVessel (
-                    wallet,  
-                    vesselData.vessel_name, 
-                    vesselData.imo_number,
-                    vesselData.vessel_description,
-                    vesselData.ship_company
-                );
-                setIsStoringSuccess(response);
-                closeModal(false)
+            const injectVessel = async() => {
+                const authenticateVessel = blockchainVesselData.some(vessel => {
+                    return vessel.imo_number === vesselData.imo_number
+                });
+                if(!authenticateVessel) {
+                    const response = await storeVessel (
+                        wallet,  
+                        vesselData.vessel_name, 
+                        vesselData.imo_number,
+                        vesselData.vessel_description,
+                        vesselData.ship_company
+                    );
+                    setIsStoringSuccess(response);
+                    closeModal(false)
+                } else {
+                    setFormErrors({
+                        vessel_reg_failed: "please check again"
+                    });
+                }
+                
             }
-            loadVessel();
+            injectVessel();
         }
     }, [formErrors] );
 
@@ -69,7 +90,7 @@ const AddVessel  = ({ wallet, dataLoading, closeModal }) => {
 
     return (
         <div className="modal-background">
-            <div className="modal-container">
+            <div className="modal-container shadow-sm">
                 <form onSubmit={handleSubmit}>
                     <div className="modal-header">
                       <h5 className="modal-title">Store Vessel</h5>
@@ -117,6 +138,7 @@ const AddVessel  = ({ wallet, dataLoading, closeModal }) => {
                                   onChange={handleChange}
                                 />
                                 <label className="error-text col-form-label">{formErrors.ship_company}</label>
+                                <label className="error-text col-form-label">{formErrors.vessel_reg_failed}</label>
                             </div>
                         </div>  
                     </div>

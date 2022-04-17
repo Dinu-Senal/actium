@@ -25,8 +25,7 @@ const LoginPage = ({ wallet }) => {
                     user.full_name === loginData.full_name && 
                     user.license_number === loginData.license_number
                 ) {
-                    console.log("Logged");
-                    navigate('/home')
+                    navigate(`/home?user_key=${user.key}&usertype=${user.designation}`)
                 } else {
                     setFormErrors({
                         login_failed: "please check again"
@@ -37,8 +36,8 @@ const LoginPage = ({ wallet }) => {
     }, [formErrors] );
 
     const loadUser = async () => {
-        const user = await getUsers(wallet);
-        setUserData(user);
+        const users = await getUsers(wallet);
+        setUserData(users);
     }
 
     const handleChange = (event) => {
@@ -50,7 +49,6 @@ const LoginPage = ({ wallet }) => {
         event.preventDefault();
         setFormErrors(validate(loginData));
         setIsSubmit(true);
-        console.log(userData)
     }
 
     const validate = (loginValues) => {
@@ -65,7 +63,7 @@ const LoginPage = ({ wallet }) => {
     }
 
     return (
-        <div className="primary-card mt-5">
+        <div className="login-content primary-card mt-5">
             <form className="p-3" onSubmit={handleSubmit}>
                 <h2 className="text-uppercase text-center mx-5 mt-3 mb-5">Login</h2>
                 <div className="login-body px-5">

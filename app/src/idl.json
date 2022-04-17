@@ -103,11 +103,15 @@
       ],
       "args": [
         {
-          "name": "approval",
+          "name": "vesselPart",
           "type": "string"
         },
         {
-          "name": "comment",
+          "name": "vesselPartSerialKey",
+          "type": "string"
+        },
+        {
+          "name": "vesselImoFkey",
           "type": "string"
         }
       ]
@@ -218,6 +222,14 @@
         },
         {
           "name": "iComment",
+          "type": "string"
+        },
+        {
+          "name": "maintenanceBatch",
+          "type": "string"
+        },
+        {
+          "name": "vesselPartIdFkey",
           "type": "string"
         }
       ]
@@ -344,11 +356,15 @@
             "type": "i64"
           },
           {
-            "name": "approval",
+            "name": "vesselPart",
             "type": "string"
           },
           {
-            "name": "comment",
+            "name": "vesselPartSerialKey",
+            "type": "string"
+          },
+          {
+            "name": "vesselImoFkey",
             "type": "string"
           }
         ]
@@ -442,6 +458,14 @@
           {
             "name": "iComment",
             "type": "string"
+          },
+          {
+            "name": "maintenanceBatch",
+            "type": "string"
+          },
+          {
+            "name": "vesselPartSerialKeyFkey",
+            "type": "string"
           }
         ]
       }
@@ -527,91 +551,106 @@
     },
     {
       "code": 6009,
-      "name": "CompanyAdminApprovalTooLong",
-      "msg": "Only maximum of 8 characters can be provided for the company admin approval"
+      "name": "CompanyAdminVesselPartTooLong",
+      "msg": "Only maximum of 50 characters can be provided for the vessel part"
     },
     {
       "code": 6010,
-      "name": "CompanyAdminCommentTooLong",
-      "msg": "Only maximum of 50 characters can be provided for the company admin comment"
+      "name": "CompanyAdminVesselPartKeyTooLong",
+      "msg": "Only maximum of 30 characters can be provided for the vessel part serial key"
     },
     {
       "code": 6011,
+      "name": "CompanyAdminVesselIMOTooLong",
+      "msg": "Only maximum of 20 characters can be provided for the vessel imo number"
+    },
+    {
+      "code": 6012,
       "name": "ValidatorDesignationTooLong",
       "msg": "Only maximum of 20 characters can be provided for the validator designation"
     },
     {
-      "code": 6012,
+      "code": 6013,
       "name": "ValidatedStatusTooLong",
       "msg": "Only maximum of 3 characters can be provided for the validated status"
     },
     {
-      "code": 6013,
+      "code": 6014,
       "name": "ValidatorCommentTooLong",
       "msg": "Only maximum of 300 characters can be provided for the validator's comment"
     },
     {
-      "code": 6014,
+      "code": 6015,
       "name": "ProviderNameTooLong",
       "msg": "Only maximum of 50 characters can be provided for the provider name"
     },
     {
-      "code": 6015,
+      "code": 6016,
       "name": "PartIdTooLong",
       "msg": "Only maximum of 30 characters can be provided for the part_id"
     },
     {
-      "code": 6016,
+      "code": 6017,
       "name": "PartDescriptionTooLong",
       "msg": "Only maximum of 200 characters can be provided for the part description"
     },
     {
-      "code": 6017,
+      "code": 6018,
       "name": "PurchasedDateTooLong",
       "msg": "Only maximum of 10 characters can be provided for the purchased data"
     },
     {
-      "code": 6018,
+      "code": 6019,
       "name": "WarrantyCodeTooLong",
       "msg": "Only maximum of 20 characters can be provided for the warranty code"
     },
     {
-      "code": 6019,
+      "code": 6020,
       "name": "InspectorNameTooLong",
       "msg": "Only maximum of 50 characters can be provided for the inspector name"
     },
     {
-      "code": 6020,
+      "code": 6021,
       "name": "InspectorStatusTooLong",
       "msg": "Only maximum of 3 characters can be provided for the inspected status"
     },
     {
-      "code": 6021,
+      "code": 6022,
       "name": "InspectorCommentTooLong",
       "msg": "Only maximum of 300 characters can be provided for the inspector's comment"
     },
     {
-      "code": 6022,
+      "code": 6023,
+      "name": "InspectorMaintenanceBatchTooLong",
+      "msg": "Only maximum of 50 characters can be provided for the maintenance batch"
+    },
+    {
+      "code": 6024,
+      "name": "InspectorVesselPartSerialKeyTooLong",
+      "msg": "Only maximum of 30 characters can be provided for the vessel part serial key"
+    },
+    {
+      "code": 6025,
       "name": "DeliveryServiceNameTooLong",
       "msg": "Only maximum of 50 characters can be provided for the delivery service name"
     },
     {
-      "code": 6023,
+      "code": 6026,
       "name": "DeliveredAddressTooLong",
       "msg": "Only maximum of 120 characters can be provided for the delivered address"
     },
     {
-      "code": 6024,
+      "code": 6027,
       "name": "DeliveredDateTooLong",
       "msg": "Only maximum of 10 characters can be provided for the delivered date"
     },
     {
-      "code": 6025,
+      "code": 6028,
       "name": "WarehouseNameTooLong",
       "msg": "Only maximum of 50 characters can be provided for the warehouse"
     }
   ],
   "metadata": {
-    "address": "4MzsanEXKmTtjA3t9eLDC7YUfAyf8Wp9m9vTKTvPSSqL"
+      "address": "4MzsanEXKmTtjA3t9eLDC7YUfAyf8Wp9m9vTKTvPSSqL"
   }
 }

@@ -6,9 +6,19 @@
 a:hover {
   text-decoration: none;
 }
+
+.box-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+.main-box {
+  position: relative;
+}
+
 /* table */
 .table {
-  width: 700px;
+  width: 87vw;
   margin-left: auto;
   margin-right: auto;
   background: #FFFFFF;
@@ -17,7 +27,7 @@ a:hover {
 }
 .scrollable-table {
   position: relative;
-  height: 500px;
+  height: 65vh;
   overflow: scroll;
   overflow-x: hidden;
 }
@@ -25,12 +35,30 @@ a:hover {
   border-top: none !important;
   border-bottom: 2px solid #000000 !important;
 }
+.maintenance-table {
+  width: 87vw;
+  margin-left: auto;
+  margin-right: auto;
+  background-image: linear-gradient(180deg, #19201F 0%, #02090A 100%);
+  color: #FFF;
+  border-radius: 10px;
+  border: none;
+}
+.maintenance-table-heading {
+  border-top: none !important;
+  border-bottom: 2px solid #FFFFFF !important;
+}
 
 /* alignment */
 .primary-container {
   display: flex;
   width: 100vw;
   height: 100vh;
+}
+.record-container {
+  display: flex;
+  width: 100vw;
+  height: 0;
 }
 .main-center-container {
   justify-content: center;
@@ -54,12 +82,63 @@ a:hover {
   margin: auto;
   border-radius: 25px;
 }
+.secondary-card {
+  background-image: linear-gradient(180deg, #066163 0%, #191919 100%);
+  border-radius: 25px;
+  color: #FFFFFF;
+}
+.ternary-card {
+  background-image: linear-gradient(180deg, #163E46 0%, #19201F 100%);
+  border-radius: 25px;
+  color: #FFFFFF;
+}
+.card-white {
+  background: #FFFFFF;
+  margin: auto;
+  min-height: 100vh;
+  border-radius: 25px;
+}
+.maintenance-record-card {
+  background-image: linear-gradient(180deg, #19201F 0%, #02090A 100%);
+  border-radius: 10px;
+  min-height: 33vh;
+  color: #FFFFFF;
+}
 
 /* text */
 .landing-text {
   font-size: 3rem;
   font-weight: 500;
   text-transform: uppercase;
+}
+.primary-text {
+  font-size: 2rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+.subheading-text {
+  font-size: 1.4rem;
+}
+.bold-text {
+  font-weight: 500;
+}
+.burn-orange-color {
+  color: #FF4C29;
+}
+.burn-yellow-color {
+  color: #F0A500;
+}
+.burn-purple-color {
+  color: #EB033D;
+}
+.teal-color {
+  color: #24CA97;
+}
+.sky-blue-color {
+  color: #32E0C4;
+}
+.green-color {
+  color: #B2D430;
 }
 .error-text {
   color: #DA1212;
@@ -69,6 +148,13 @@ a:hover {
   text-transform: uppercase;
   color: #000;
   border: none;
+  padding: 5px 15px 5px 15px;
+}
+.error-msg-sm-bdr {
+  background: #DA1212;
+  text-transform: uppercase;
+  color: #000;
+  border-radius: 25px;
   padding: 5px 15px 5px 15px;
 }
 
@@ -83,6 +169,34 @@ a:hover {
 }
 .actium-main-button:hover {
   background: #15383E;
+  transition-duration: 0.6s;
+}
+.actium-secondary-button {
+  cursor: pointer !important;
+  background: #FFFFFF;
+  border: 1px solid #000000;
+  text-transform: uppercase;
+  color: #000;
+  border-radius: 25px;
+  padding: 5px 15px 5px 15px;
+}
+.actium-secondary-button:hover {
+  background: #000000;
+  color: #FFF;
+  transition-duration: 0.6s;
+}
+.actium-maintenance-button {
+  cursor: pointer !important;
+  background: #F5F5F5;
+  border: 1px solid #000000;
+  text-transform: uppercase;
+  color: #000;
+  border-radius: 25px;
+  padding: 5px 15px 5px 15px;
+}
+.actium-maintenance-button:hover {
+  background: #24CA97;
+  transition-duration: 0.6s;
 }
 
 /* modal styles*/
@@ -90,7 +204,7 @@ a:hover {
   width: 100vw;
   height: 100vh;
   z-index: 1;
-  background-color: rgba(200, 200, 200);
+  background-color: rgb(224, 224, 224);
   position: fixed;
   display: flex;
   justify-content: center;
@@ -100,7 +214,6 @@ a:hover {
   width: 600px;
   border-radius: 12px;
   background-color: white;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   display: flex;
   flex-direction: column;
   padding: 25px;

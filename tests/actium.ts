@@ -397,8 +397,9 @@ describe('actium', () => {
     // 'storeCompanyAdminRecord' instruction execution
     const companyAdminRecord = anchor.web3.Keypair.generate();
     await program.rpc.storeCompanyAdminRecord(
-      'approved',
-      'maintenance phase one completed',
+      'propler',
+      '3848',
+      '990',
       {
         accounts: {
           companyadminrecord: companyAdminRecord.publicKey,
@@ -413,33 +414,9 @@ describe('actium', () => {
 
     // making sure company admin record account has valid data
     assert.equal(companyAdminRecordAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
-    assert.equal(companyAdminRecordAccount.approval, 'approved');
-    assert.equal(companyAdminRecordAccount.comment, 'maintenance phase one completed');
-    assert.ok(companyAdminRecordAccount.timestamp);
-  });
-
-  it('can store a new company record without comment', async () => {
-    // 'storeCompanyAdminRecord' instruction execution
-    const companyAdminRecord = anchor.web3.Keypair.generate();
-    await program.rpc.storeCompanyAdminRecord(
-      'approved',
-      '',
-      {
-        accounts: {
-          companyadminrecord: companyAdminRecord.publicKey,
-          author: program.provider.wallet.publicKey,
-          systemProgram: anchor.web3.SystemProgram.programId
-        },
-        signers: [companyAdminRecord]
-      }
-    );
-    // fetching account details of the created company admin record
-    const companyAdminRecordAccount = await program.account.companyAdminRecord.fetch(companyAdminRecord.publicKey);
-
-    // making sure company admin record account has valid data
-    assert.equal(companyAdminRecordAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
-    assert.equal(companyAdminRecordAccount.approval, 'approved');
-    assert.equal(companyAdminRecordAccount.comment, '');
+    assert.equal(companyAdminRecordAccount.vesselPart, 'propler');
+    assert.equal(companyAdminRecordAccount.vesselPartSerialKey, '3848');
+    assert.equal(companyAdminRecordAccount.vesselImoFkey, '990');
     assert.ok(companyAdminRecordAccount.timestamp);
   });
 
@@ -452,8 +429,9 @@ describe('actium', () => {
     // 'storeCompanyAdminRecord' instruction execution
     const companyAdminRecord = anchor.web3.Keypair.generate();
     await program.rpc.storeCompanyAdminRecord(
-     'declined',
-     'Propler requirements',
+      'engine',
+      '1123',
+      '4903',
      {
        accounts: {
          companyadminrecord: companyAdminRecord.publicKey,
@@ -468,38 +446,15 @@ describe('actium', () => {
 
     // making sure company admin record account has valid data
     assert.equal(companyAdminRecordAccount.author.toBase58(), newUser.publicKey.toBase58());
-    assert.equal(companyAdminRecordAccount.approval, 'declined');
-    assert.equal(companyAdminRecordAccount.comment, 'Propler requirements');
+    assert.equal(companyAdminRecordAccount.vesselPart, 'engine');
+    assert.equal(companyAdminRecordAccount.vesselPartSerialKey, '1123');
+    assert.equal(companyAdminRecordAccount.vesselImoFkey, '4903');
     assert.ok(companyAdminRecordAccount.timestamp);
-  });
-
-  it('cannot provide company admin approval with greater than 8 characters', async () => {
-    // 'storeCompanyAdminRecord' instruction execution
-    const companyAdminRecord = anchor.web3.Keypair.generate();
-    const cAdminApprovalWith9Chars = 'a'.repeat(9);
-
-    try {
-      await program.rpc.storeCompanyAdminRecord(
-        cAdminApprovalWith9Chars,
-        'Not maintained properly', {
-          accounts: {
-            companyadminrecord: companyAdminRecord.publicKey,
-            author: program.provider.wallet.publicKey,
-            systemProgram: anchor.web3.SystemProgram.programId
-          },
-          signers: [companyAdminRecord]
-        }
-      )
-    } catch (error) {
-      assert.equal(error.msg, 'Only maximum of 8 characters can be provided for the company admin approval');
-      return;
-    }
-    assert.fail('Ought to have a failure becuase entered company approval have 9 chars');
   });
 
   it('can get all the company admin records', async () => {
     const companyAdminRecordAccounts = await program.account.companyAdminRecord.all();
-    assert.equal(companyAdminRecordAccounts.length, 3);
+    assert.equal(companyAdminRecordAccounts.length, 2);
   });
 
   it('can retrieve company admin records by author', async () => {
@@ -512,7 +467,7 @@ describe('actium', () => {
         }
       }
     ]);
-    assert.equal(companyAdminRecordAccounts.length, 2);
+    assert.equal(companyAdminRecordAccounts.length, 1);
     assert.ok(companyAdminRecordAccounts.every(companyAdminRecordAccount => {
       return companyAdminRecordAccount.account.author.toBase58() === authorPublicKey.toBase58()
     }));
@@ -589,6 +544,8 @@ describe('actium', () => {
       'Manul',
       'yes',
       'have to do more repairs',
+      'Batch 1',
+      '990',
       {
         accounts : {
           inspectorrecord: inspectorRecord.publicKey,
@@ -606,6 +563,8 @@ describe('actium', () => {
     assert.equal(inspectorRecordAccount.inspectorName, 'Manul');
     assert.equal(inspectorRecordAccount.inspected, 'yes');
     assert.equal(inspectorRecordAccount.iComment, 'have to do more repairs');
+    assert.equal(inspectorRecordAccount.maintenanceBatch, 'Batch 1');
+    assert.equal(inspectorRecordAccount.vesselPartSerialKeyFkey, '990');
     assert.ok(inspectorRecordAccount.timestamp);
   });
 

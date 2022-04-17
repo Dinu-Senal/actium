@@ -80,24 +80,29 @@ pub mod actium {
     // company admin record
     pub fn store_company_admin_record(
         ctx: Context<StoreCompanyAdminRecord>,
-        approval: String,
-        comment: String
+        vessel_part: String,
+        vessel_part_serial_key: String,
+        vessel_imo_fkey: String,
     ) -> ProgramResult {
         let companyadminrecord: &mut Account<CompanyAdminRecord> = &mut ctx.accounts.companyadminrecord;
         let author: &Signer = &ctx.accounts.author;
         let clock: Clock = Clock::get().unwrap();
 
-        if approval.chars().count() > 8 {
-            return Err(ErrorConfig::CompanyAdminApprovalTooLong.into())
+        if vessel_part.chars().count() > 50 {
+            return Err(ErrorConfig::CompanyAdminVesselPartTooLong.into())
         }
-        if comment.chars().count() > 50 {
-            return Err(ErrorConfig::CompanyAdminCommentTooLong.into())
+        if vessel_part_serial_key.chars().count() > 30 {
+            return Err(ErrorConfig::CompanyAdminVesselPartKeyTooLong.into())
+        }
+        if vessel_imo_fkey.chars().count() > 20 {
+            return Err(ErrorConfig::CompanyAdminVesselIMOTooLong.into())
         }
 
         companyadminrecord.author = *author.key;
         companyadminrecord.timestamp = clock.unix_timestamp;
-        companyadminrecord.approval = approval;
-        companyadminrecord.comment = comment;
+        companyadminrecord.vessel_part = vessel_part;
+        companyadminrecord.vessel_part_serial_key = vessel_part_serial_key;
+        companyadminrecord.vessel_imo_fkey = vessel_imo_fkey;
         Ok(())
     }
     // validator record
@@ -170,7 +175,9 @@ pub mod actium {
         ctx: Context<StoreInspectorRecord>,
         inspector_name: String,
         inspected: String,
-        i_comment: String
+        i_comment: String,
+        maintenance_batch: String,
+        vessel_part_id_fkey: String,
     ) -> ProgramResult {
         let inspectorrecord: &mut Account<InspectorRecord> = &mut ctx.accounts.inspectorrecord;
         let author: &Signer = &mut ctx.accounts.author;
@@ -185,12 +192,20 @@ pub mod actium {
         if i_comment.chars().count() > 300 {
             return Err(ErrorConfig::InspectorCommentTooLong.into())
         }
+        if maintenance_batch.chars().count() > 50 {
+            return Err(ErrorConfig::InspectorMaintenanceBatchTooLong.into())
+        }
+        if vessel_part_id_fkey.chars().count() > 50 {
+            return Err(ErrorConfig::InspectorVesselPartSerialKeyTooLong.into())
+        }
 
         inspectorrecord.author = *author.key;
         inspectorrecord.timestamp = clock.unix_timestamp;
         inspectorrecord.inspector_name = inspector_name;
         inspectorrecord.inspected = inspected;
         inspectorrecord.i_comment = i_comment;
+        inspectorrecord.maintenance_batch = maintenance_batch;
+        inspectorrecord.vessel_part_serial_key_fkey = vessel_part_id_fkey;
         Ok(())
     }
     // delivery service record
@@ -337,9 +352,9 @@ pub struct Vessel {
 pub struct CompanyAdminRecord {
     pub author: Pubkey,
     pub timestamp: i64,
-    pub approval: String,
-    pub comment: String,
-    /* pub vessel_address: Pubkey */
+    pub vessel_part: String,
+    pub vessel_part_serial_key: String,
+    pub vessel_imo_fkey: String
 }
 
 // structure of validator record account
@@ -374,7 +389,8 @@ pub struct InspectorRecord {
     pub inspector_name: String,
     pub inspected: String,
     pub i_comment: String,
-    /* pub vessel_address: Pubkey */
+    pub maintenance_batch: String,
+    pub vessel_part_serial_key_fkey: String
 }
 
 // structure of delivery service record account
@@ -408,8 +424,9 @@ const MAX_IMO_NUMBER_LENGTH: usize = 20 * 4; // stores maximum 20 chars
 const MAX_VESSEL_DESC_LENGTH: usize = 120 * 4; // stores maximum 120 chars
 const MAX_SHIPCOMPANY_LENGTH: usize = 20 * 4; // stores maximum 20 chars
 // company admin record constants
-const MAX_APPROVAL_LENGTH: usize = 8 * 4; // stores maximum 8 chars
-const MAX_CADMIN_COMMENT_LENGTH: usize = 50 * 4; // stores maximum 50 chars
+const MAX_VESSEL_PART_LENGTH: usize = 50 * 4; // stores maximum 50 chars
+const MAX_VESSEL_PART_SERIAL_KEY_LENGTH: usize = 30 * 4; // stores maximum 30 chars
+const MAX_VESSEL_IMO_FKEY_LENGTH: usize = 20 * 4; // stores maximum 20 chars
 // validator record constants
 const MAX_VALIDATOR_DESIGNATION_LENGTH: usize = 20 * 4; // stores maximum 20 chars
 const MAX_VALIDATED_LENGTH: usize = 3 * 4; // stores maximum 3 chars
@@ -424,6 +441,8 @@ const MAX_WARRANTY_CODE_LENGTH: usize = 20 * 4; // store maximum 20 chars
 const MAX_INSPECTOR_NAME_LENGTH: usize = 50 * 4; // store maximum 50 chars
 const MAX_INSPECTED_LENGTH: usize = 3 * 4; // stores maximum 3 chars
 const MAX_ICOMMENT_LENGTH: usize = 300 * 4; // stores maximum 300 chars
+const MAX_MAINTENANCE_BATCH_LENGTH: usize = 50 * 4; // stores maximum 50 chars
+const MAX_VESSEL_PART_SERIAL_KEY_FKEY_LENGTH: usize = 30 * 4; // stores maximum 30 chars
 // delivery service record constants
 const MAX_DELIVERY_SERVICE_NAME_LENGTH: usize = 50 * 4; // store maximum 50 chars
 const MAX_DELIVERED_ADDRESS_LENGTH: usize = 120 * 4; // store maximum 120 chars
@@ -456,8 +475,9 @@ impl CompanyAdminRecord {
     const LEN: usize = DISCRIMINATOR_LENGTH
         + PUBLIC_KEY_LENGTH // author
         + TIMESTAMP_LENGTH // timestamp
-        + PREFIXED_STRING_LENGTH + MAX_APPROVAL_LENGTH // company admin approval
-        + PREFIXED_STRING_LENGTH + MAX_CADMIN_COMMENT_LENGTH; // company admin comment
+        + PREFIXED_STRING_LENGTH + MAX_VESSEL_PART_LENGTH // vessel part
+        + PREFIXED_STRING_LENGTH + MAX_VESSEL_PART_SERIAL_KEY_LENGTH // vessel part serial key
+        + PREFIXED_STRING_LENGTH + MAX_VESSEL_IMO_FKEY_LENGTH; // company admin vessel imo
 }
 // configuring total size of the validator record account
 impl ValidatorRecord {
@@ -486,7 +506,9 @@ impl InspectorRecord {
         + TIMESTAMP_LENGTH // timestamp
         + PREFIXED_STRING_LENGTH + MAX_INSPECTOR_NAME_LENGTH // inspector name
         + PREFIXED_STRING_LENGTH + MAX_INSPECTED_LENGTH // inspected status
-        + PREFIXED_STRING_LENGTH + MAX_ICOMMENT_LENGTH; // inspector's comment
+        + PREFIXED_STRING_LENGTH + MAX_ICOMMENT_LENGTH // inspector's comment
+        + PREFIXED_STRING_LENGTH + MAX_MAINTENANCE_BATCH_LENGTH // maintenance batch
+        + PREFIXED_STRING_LENGTH + MAX_VESSEL_PART_SERIAL_KEY_FKEY_LENGTH; // vessel part serial key
 }
 // configure total size of the delivery service record account
 impl DeliveryServiceRecord {
@@ -522,10 +544,12 @@ pub enum ErrorConfig {
     #[msg("Only maximum of 20 characters can be provided for the ship company")]
     ShipCompanyNameTooLong,
     // company admin record errors
-    #[msg("Only maximum of 8 characters can be provided for the company admin approval")]
-    CompanyAdminApprovalTooLong,
-    #[msg("Only maximum of 50 characters can be provided for the company admin comment")]
-    CompanyAdminCommentTooLong,
+    #[msg("Only maximum of 50 characters can be provided for the vessel part")]
+    CompanyAdminVesselPartTooLong,
+    #[msg("Only maximum of 30 characters can be provided for the vessel part serial key")]
+    CompanyAdminVesselPartKeyTooLong,
+    #[msg("Only maximum of 20 characters can be provided for the vessel imo number")]
+    CompanyAdminVesselIMOTooLong,
     // validator record errors
     #[msg("Only maximum of 20 characters can be provided for the validator designation")]
     ValidatorDesignationTooLong,
@@ -551,7 +575,11 @@ pub enum ErrorConfig {
     InspectorStatusTooLong,
     #[msg("Only maximum of 300 characters can be provided for the inspector's comment")]
     InspectorCommentTooLong,
-    // inspector record errors
+    #[msg("Only maximum of 50 characters can be provided for the maintenance batch")]
+    InspectorMaintenanceBatchTooLong,
+    #[msg("Only maximum of 30 characters can be provided for the vessel part serial key")]
+    InspectorVesselPartSerialKeyTooLong,
+    // delivery service record errors
     #[msg("Only maximum of 50 characters can be provided for the delivery service name")]
     DeliveryServiceNameTooLong,
     #[msg("Only maximum of 120 characters can be provided for the delivered address")]

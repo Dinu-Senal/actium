@@ -1,20 +1,16 @@
 import { useEffect, useState } from 'react';
-import { getPhantomWallet } from '@solana/wallet-adapter-wallets';
-import { useWallet, WalletProvider, ConnectionProvider } from '@solana/wallet-adapter-react';
-import { WalletModalProvider, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { network } from '../constants';
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { getVessels } from '../apis/get-vessels';
 import AddVessel from './AddVessel';
 
-const wallets = [
-    getPhantomWallet()
-]
-
-const HomePage = () => {
+const HomePage = ({ wallet }) => {
+    const navigate = useNavigate();
+    
     const [ vesselData, setVesselData ] = useState([]);
     const [ dataLoaded, setDataLoaded ] = useState(false);
     const [ isModalOpen, setIsModalOpen ] = useState(false);
-    const wallet = useWallet();
+    const [ searchParams ] = useSearchParams();
 
     const loadVessel = async () => {
         const vessel = await getVessels(wallet);
@@ -26,6 +22,48 @@ const HomePage = () => {
         setDataLoaded(false);
     }, [wallet, dataLoaded]);
 
+    const userKey = searchParams.get('user_key')
+    const userType = searchParams.get('usertype');
+  
+    const renderOptionalButtons = () => {
+        if(userKey === null) {
+            return (
+                <div className="inline-row mt-4">
+                    <button 
+                        className="actium-main-button" 
+                        onClick={() => navigate('/')}>
+                            Back
+                    </button>
+                </div>
+            );
+        } else {
+            return (
+                <div className="inline-row mt-4">
+                    <button 
+                        className="actium-main-button" 
+                        onClick={() => navigate('/')}>
+                            Sign Out
+                    </button>
+                    <button 
+                        className="actium-main-button ml-2" 
+                        onClick={() => navigate('/account?key=${}')}>
+                            My Account
+                    </button>
+                    {(userType === "maintenance_admin") && (
+                        <button 
+                            className="actium-main-button ml-2" 
+                            onClick={() => setIsModalOpen(true)}>
+                                Add Vessels
+                        </button>
+                    )}
+                    <div className="ml-2">
+                        <WalletMultiButton />
+                    </div>
+                </div>
+            )
+        }
+    }
+
     const renderVessels = () => {
         if(vesselData.length !== 0) {
             return (
@@ -33,20 +71,31 @@ const HomePage = () => {
                     <table className="table" style={{border: "none"}}>
                         <thead>
                             <tr>
-                              <th className="table-heading" scope="col">Vessel Name</th>
-                              <th className="table-heading" scope="col">IMO Number</th>
-                              <th className="table-heading" scope="col">Vessel Description</th>
-                              <th className="table-heading" scope="col">Ship Company</th>
+                                <th className="table-heading" scope="col">Public Key</th>
+                                <th className="table-heading" scope="col">Vessel Name</th>
+                                <th className="table-heading" scope="col">Seaworthiness</th>
+                                <th className="table-heading" scope="col">Options</th>
                             </tr>
                         </thead>
                         <tbody>
                             {vesselData.map((vessel, idx) => {
                                 return (
                                     <tr key={idx}>
+                                        <th>{vessel.sliced_key}</th>
                                         <th>{vessel.vessel_name}</th>
-                                        <th>{vessel.imo_number}</th>
-                                        <th>{vessel.vessel_description}</th>
-                                        <th>{vessel.ship_company}</th>
+                                        <th>40%</th>
+                                        <th className="pt-0">
+                                            <button 
+                                                className="actium-secondary-button ml-2" 
+                                                onClick={() => navigate(`/vessel?vessel_key=${vessel.key}&user_key=${userKey}`)}>
+                                                View Details
+                                            </button>
+                                            <button 
+                                                className="actium-secondary-button ml-2 mt-3" 
+                                                onClick={() => setIsModalOpen(true)}>
+                                                Validate
+                                            </button>
+                                        </th>
                                     </tr>
                                 )
                             })}
@@ -58,22 +107,8 @@ const HomePage = () => {
     }
     return (
         <div className={`${isModalOpen && "primary-container"} main-center-container-sm`}>
-            <div className="inline-row mt-4">
-                {(!wallet.connected) ? (
-                    <div className="error-msg" >
-                        Connect to Add Vessels
-                    </div>
-                ) : 
-                    <button 
-                        className="actium-main-button" 
-                        onClick={() => setIsModalOpen(true)}>
-                            Add Vessels
-                    </button>
-                }
-                <div className="ml-2">
-                    <WalletMultiButton />
-                </div>
-            </div>
+            <div className="landing-text mt-3">Vessel Record</div>
+            {renderOptionalButtons()}
             {isModalOpen && 
                 <AddVessel 
                     wallet={wallet} 
@@ -88,16 +123,4 @@ const HomePage = () => {
     );
 }
 
-const ConnectedHomePage = () => {
-    return (
-        <ConnectionProvider endpoint={network.local}>
-            <WalletProvider wallets={wallets}>
-                <WalletModalProvider>
-                    <HomePage />        
-                </WalletModalProvider>
-            </WalletProvider>
-        </ConnectionProvider>   
-    );
-}
-
-export default ConnectedHomePage;
+export default HomePage;
