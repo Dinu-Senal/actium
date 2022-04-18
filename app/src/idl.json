@@ -137,15 +137,15 @@
       ],
       "args": [
         {
-          "name": "validatorDesignation",
-          "type": "string"
-        },
-        {
-          "name": "validated",
+          "name": "vApproval",
           "type": "string"
         },
         {
           "name": "vComment",
+          "type": "string"
+        },
+        {
+          "name": "vesselImoFkey",
           "type": "string"
         }
       ]
@@ -212,14 +212,6 @@
         }
       ],
       "args": [
-        {
-          "name": "inspectorName",
-          "type": "string"
-        },
-        {
-          "name": "inspected",
-          "type": "string"
-        },
         {
           "name": "iComment",
           "type": "string"
@@ -384,15 +376,15 @@
             "type": "i64"
           },
           {
-            "name": "validatorDesignation",
-            "type": "string"
-          },
-          {
-            "name": "validated",
+            "name": "vApproval",
             "type": "string"
           },
           {
             "name": "vComment",
+            "type": "string"
+          },
+          {
+            "name": "vesselImoFkey",
             "type": "string"
           }
         ]
@@ -446,14 +438,6 @@
           {
             "name": "timestamp",
             "type": "i64"
-          },
-          {
-            "name": "inspectorName",
-            "type": "string"
-          },
-          {
-            "name": "inspected",
-            "type": "string"
           },
           {
             "name": "iComment",
@@ -566,18 +550,18 @@
     },
     {
       "code": 6012,
-      "name": "ValidatorDesignationTooLong",
-      "msg": "Only maximum of 20 characters can be provided for the validator designation"
-    },
-    {
-      "code": 6013,
-      "name": "ValidatedStatusTooLong",
+      "name": "ValidatorStatusTooLong",
       "msg": "Only maximum of 3 characters can be provided for the validated status"
     },
     {
-      "code": 6014,
+      "code": 6013,
       "name": "ValidatorCommentTooLong",
       "msg": "Only maximum of 300 characters can be provided for the validator's comment"
+    },
+    {
+      "code": 6014,
+      "name": "ValidatorIMONumberTooLong",
+      "msg": "Only maximum of 20 characters can be provided for the validator's vessel imo"
     },
     {
       "code": 6015,
@@ -606,51 +590,41 @@
     },
     {
       "code": 6020,
-      "name": "InspectorNameTooLong",
-      "msg": "Only maximum of 50 characters can be provided for the inspector name"
-    },
-    {
-      "code": 6021,
-      "name": "InspectorStatusTooLong",
-      "msg": "Only maximum of 3 characters can be provided for the inspected status"
-    },
-    {
-      "code": 6022,
       "name": "InspectorCommentTooLong",
       "msg": "Only maximum of 300 characters can be provided for the inspector's comment"
     },
     {
-      "code": 6023,
+      "code": 6021,
       "name": "InspectorMaintenanceBatchTooLong",
       "msg": "Only maximum of 50 characters can be provided for the maintenance batch"
     },
     {
-      "code": 6024,
+      "code": 6022,
       "name": "InspectorVesselPartPublicKeyTooLong",
       "msg": "Only maximum of 30 characters can be provided for the vessel part public key"
     },
     {
-      "code": 6025,
+      "code": 6023,
       "name": "DeliveryServiceNameTooLong",
       "msg": "Only maximum of 50 characters can be provided for the delivery service name"
     },
     {
-      "code": 6026,
+      "code": 6024,
       "name": "DeliveredAddressTooLong",
       "msg": "Only maximum of 120 characters can be provided for the delivered address"
     },
     {
-      "code": 6027,
+      "code": 6025,
       "name": "DeliveredDateTooLong",
       "msg": "Only maximum of 10 characters can be provided for the delivered date"
     },
     {
-      "code": 6028,
+      "code": 6026,
       "name": "WarehouseNameTooLong",
       "msg": "Only maximum of 50 characters can be provided for the warehouse"
     }
   ],
   "metadata": {
-      "address": "4MzsanEXKmTtjA3t9eLDC7YUfAyf8Wp9m9vTKTvPSSqL"
+    "address": "4MzsanEXKmTtjA3t9eLDC7YUfAyf8Wp9m9vTKTvPSSqL"
   }
 }

@@ -9,11 +9,13 @@ import { getInspection } from '../apis/get-inspections';
 const SupplyChain = ({ wallet }) => {
     const navigate = useNavigate();
     const [ vesselPartData, setVesselPartData ] = useState([]);
-    const [ retrievedVesselPartData, setRetrievedVesselPartData ] = useState({});
     const [ userData, setUserData ] = useState([]);
-    const [ loginUserData, setLoginUserData ] = useState({});
     const [ inspectionData, setInspectionData ] = useState([]);
+
     const [ inspectionDataLoaded, setInspectionDataLoaded ] = useState(false);
+
+    const [ retrievedVesselPartData, setRetrievedVesselPartData ] = useState({});
+    const [ loginUserData, setLoginUserData ] = useState({});
 
     const [ inspectionModalOpen, setInspectionModalOpen ] = useState(false);
 
@@ -49,42 +51,53 @@ const SupplyChain = ({ wallet }) => {
                 if(loginUserPublicKey === user.key) {
                     setLoginUserData({
                         name: user.full_name, 
-                        designation: user.designation,
+                        license_number: user.license_number,
+                        designation: user.designation
+                    })
+                }
+            })
+        }
+        const retrieveVesselPartData = () => {
+            vesselPartData.forEach(vesselPart => {
+                if(vesselPart.vessel_part_serial_key === vesselPartSerialKey && 
+                    vesselPart.vessel_imo_fkey === vesselPartImoNumber) {
+                    setRetrievedVesselPartData({
+                        vessel_part_public_key: vesselPart.key,
+                        vessel_part_name: vesselPart.vessel_part,
+                        vessel_part_key: vesselPart.vessel_part_serial_key,
+                        vessel_part_created_date: vesselPart.created_at,
                     })
                 }
             })
         }
         retrieveLoginUserData();
-    }, [userData] );
-
-    useEffect(() => {
-        vesselPartData.forEach(vesselPart => {
-            if(vesselPart.vessel_part_serial_key === vesselPartSerialKey && 
-                vesselPart.vessel_imo_fkey === vesselPartImoNumber) {
-                setRetrievedVesselPartData({
-                    vessel_part_public_key: vesselPart.key,
-                    vessel_part_name: vesselPart.vessel_part,
-                    vessel_part_key: vesselPart.vessel_part_serial_key,
-                    vessel_part_created_date: vesselPart.created_at,
-                })
-            }
-        })
-    }, [vesselPartData] );
-
+        retrieveVesselPartData();
+    }, [userData, vesselPartData] );
+    
     const renderInspections = () => {
-        const inspection = inspectionData?.map(inspection => {
+        const inspection = inspectionData?.map((inspection, idx) => {
+            console.log(inspection.author_key)
             if(inspection.vessel_part_public_key_fkey === retrievedVesselPartData?.vessel_part_public_key) {
                 return (
-                    <div className="supply-chain-card my-3 mx-3">
+                    <div key={idx} className="supply-chain-card my-3 mx-3">
                         <div className="box-container mt-4">
                             <div className="main-box ml-3">
                                 <div className="subheading-text text-left px-5 mt-3">
-                                    <p><span className="bold-text text-uppercase mr-2">
-                                        Inspector Name: </span> {inspection?.inspector_name}
-                                    </p>
-                                    <p><span className="bold-text text-uppercase mr-2">
-                                        Inspected: </span> {inspection?.inspected}
-                                    </p>
+                                    {userData.map(user => {
+                                        if(user.author_key === inspection.author_key) {
+                                            return (
+                                                <>
+                                                    <p><span className="bold-text text-uppercase mr-2">
+                                                        Inspector Name: </span> {user?.full_name}
+                                                    </p>
+                                                    <p><span className="bold-text text-uppercase mr-2">
+                                                        License Number: </span> {user?.license_number}
+                                                    </p>
+                                                </>
+                                            )
+                                        }
+                                        return null
+                                    })}
                                     <p><span className="bold-text text-uppercase mr-2">
                                         Comment: </span> {inspection?.i_comment}
                                     </p>

@@ -211,6 +211,13 @@ const VesselPage = ({ wallet }) => {
                         Maintenance Record
                 </div>
                 <div className="inline-row mt-3">
+                    <button 
+                        className="actium-main-button ml-2" 
+                        onClick={() => navigate(-1)}
+                    >
+                        Back
+                    </button>
+
                     {(relevantUserData?.user_designation === "maintenance_admin" 
                     && relevantUserData?.user_author === relevantVesselData?.author) && (
                         <button 
@@ -219,13 +226,6 @@ const VesselPage = ({ wallet }) => {
                                 Add Maintenance Part
                         </button>
                     )}
-
-                    <button 
-                        className="actium-main-button ml-2" 
-                        onClick={() => navigate(-1)}
-                    >
-                        Back
-                    </button>
                     
                     <div className="ml-2">
                         <WalletMultiButton />

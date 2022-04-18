@@ -6,8 +6,6 @@ const { SystemProgram, Keypair } = web3;
 
 export const storeInspection = async (
     wallet,
-    inspector_name, 
-    inspected, 
     i_comment,
     maintenance_batch,
     vessel_part_public_key_fkey
@@ -18,8 +16,6 @@ export const storeInspection = async (
     try {
         /* interact with the program via rpc */
         await program.rpc.storeInspectorRecord(
-            inspector_name, 
-            inspected, 
             i_comment,
             maintenance_batch,
             vessel_part_public_key_fkey,

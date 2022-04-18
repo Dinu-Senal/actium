@@ -108,28 +108,29 @@ pub mod actium {
     // validator record
     pub fn store_validator_record(
         ctx: Context<StoreValidatorRecord>,
-        validator_designation: String,
-        validated: String,
-        v_comment: String
+        v_approval: String,
+        v_comment: String,
+        vessel_imo_fkey: String
     ) -> ProgramResult {
         let validatorrecord: &mut Account<ValidatorRecord> = &mut ctx.accounts.validatorrecord;
         let author: &Signer = &ctx.accounts.author;
         let clock: Clock = Clock::get().unwrap();
-
-        if validator_designation.chars().count() > 20 {
-            return Err(ErrorConfig::ValidatorDesignationTooLong.into())
-        }
-        if validated.chars().count() > 3 {
-            return Err(ErrorConfig::ValidatorDesignationTooLong.into())
+        
+        if v_approval.chars().count() > 3 {
+            return Err(ErrorConfig::ValidatorStatusTooLong.into())
         }
         if v_comment.chars().count() > 300 {
-            return Err(ErrorConfig::ValidatorDesignationTooLong.into())
+            return Err(ErrorConfig::ValidatorCommentTooLong.into())
         }
+        if vessel_imo_fkey.chars().count() > 20 {
+            return Err(ErrorConfig::ValidatorIMONumberTooLong.into())
+        }
+
         validatorrecord.author = *author.key;
         validatorrecord.timestamp = clock.unix_timestamp;
-        validatorrecord.validator_designation = validator_designation;
-        validatorrecord.validated = validated;
+        validatorrecord.v_approval = v_approval;
         validatorrecord.v_comment = v_comment;
+        validatorrecord.vessel_imo_fkey = vessel_imo_fkey;
         Ok(())
     }
     // service provider record
@@ -173,8 +174,6 @@ pub mod actium {
     // inspector record
     pub fn store_inspector_record(
         ctx: Context<StoreInspectorRecord>,
-        inspector_name: String,
-        inspected: String,
         i_comment: String,
         maintenance_batch: String,
         vessel_part_public_key_fkey: String,
@@ -183,12 +182,6 @@ pub mod actium {
         let author: &Signer = &mut ctx.accounts.author;
         let clock: Clock = Clock::get().unwrap();
 
-        if inspector_name.chars().count() > 50 {
-            return Err(ErrorConfig::InspectorNameTooLong.into())
-        }
-        if inspected.chars().count() > 3 {
-            return Err(ErrorConfig::InspectorStatusTooLong.into())
-        }
         if i_comment.chars().count() > 300 {
             return Err(ErrorConfig::InspectorCommentTooLong.into())
         }
@@ -201,8 +194,6 @@ pub mod actium {
 
         inspectorrecord.author = *author.key;
         inspectorrecord.timestamp = clock.unix_timestamp;
-        inspectorrecord.inspector_name = inspector_name;
-        inspectorrecord.inspected = inspected;
         inspectorrecord.i_comment = i_comment;
         inspectorrecord.maintenance_batch = maintenance_batch;
         inspectorrecord.vessel_part_public_key_fkey = vessel_part_public_key_fkey;
@@ -362,10 +353,9 @@ pub struct CompanyAdminRecord {
 pub struct ValidatorRecord {
     pub author: Pubkey,
     pub timestamp: i64,
-    pub validator_designation: String,
-    pub validated: String,
+    pub v_approval: String,
     pub v_comment: String,
-    /* pub vessel_address: Pubkey */
+    pub vessel_imo_fkey: String
 }
 
 // structure of service provider record account
@@ -386,8 +376,6 @@ pub struct ServiceProviderRecord {
 pub struct InspectorRecord {
     pub author: Pubkey,
     pub timestamp: i64,
-    pub inspector_name: String,
-    pub inspected: String,
     pub i_comment: String,
     pub maintenance_batch: String,
     pub vessel_part_public_key_fkey: String
@@ -428,9 +416,9 @@ const MAX_VESSEL_PART_LENGTH: usize = 50 * 4; // stores maximum 50 chars
 const MAX_VESSEL_PART_SERIAL_KEY_LENGTH: usize = 30 * 4; // stores maximum 30 chars
 const MAX_VESSEL_IMO_FKEY_LENGTH: usize = 20 * 4; // stores maximum 20 chars
 // validator record constants
-const MAX_VALIDATOR_DESIGNATION_LENGTH: usize = 20 * 4; // stores maximum 20 chars
 const MAX_VALIDATED_LENGTH: usize = 3 * 4; // stores maximum 3 chars
 const MAX_VCOMMENT_LENGTH: usize = 300 * 4; // stores maximum 300 chars
+const MAX_V_VESSEL_IMO_FKEY_LENGTH: usize = 20 * 4; // stores maximum 20 chars
 // service provider record constants
 const MAX_PROVIDER_NAME_LENGTH: usize = 50 * 4; // store maximum 50 chars
 const MAX_PART_ID_LENGTH: usize = 30 * 4; // store maximum 30 chars
@@ -438,8 +426,6 @@ const MAX_PART_DESCRIPTION_LENGTH: usize = 200 * 4; // store maximum 200 chars
 const MAX_DATE_PURCHASED_LENGTH: usize = 10 * 4; // store maximum 10 chars
 const MAX_WARRANTY_CODE_LENGTH: usize = 20 * 4; // store maximum 20 chars
 // inspector record constants
-const MAX_INSPECTOR_NAME_LENGTH: usize = 50 * 4; // store maximum 50 chars
-const MAX_INSPECTED_LENGTH: usize = 3 * 4; // stores maximum 3 chars
 const MAX_ICOMMENT_LENGTH: usize = 300 * 4; // stores maximum 300 chars
 const MAX_MAINTENANCE_BATCH_LENGTH: usize = 50 * 4; // stores maximum 50 chars
 const MAX_VESSEL_PART_PUBLIC_KEY_FKEY_LENGTH: usize = 32 * 4; // stores maximum 32 chars
@@ -484,9 +470,9 @@ impl ValidatorRecord {
     const LEN: usize = DISCRIMINATOR_LENGTH
         + PUBLIC_KEY_LENGTH // author
         + TIMESTAMP_LENGTH // timestamp
-        + PREFIXED_STRING_LENGTH + MAX_VALIDATOR_DESIGNATION_LENGTH // validator designation
         + PREFIXED_STRING_LENGTH + MAX_VALIDATED_LENGTH // validated
-        + PREFIXED_STRING_LENGTH + MAX_VCOMMENT_LENGTH; // validator's comment
+        + PREFIXED_STRING_LENGTH + MAX_VCOMMENT_LENGTH // validator's comment
+        + PREFIXED_STRING_LENGTH + MAX_V_VESSEL_IMO_FKEY_LENGTH; // validator's vessel imo
 }
 // configuring total size of the service provider record account
 impl ServiceProviderRecord {
@@ -504,8 +490,6 @@ impl InspectorRecord {
     const LEN: usize = DISCRIMINATOR_LENGTH
         + PUBLIC_KEY_LENGTH // author
         + TIMESTAMP_LENGTH // timestamp
-        + PREFIXED_STRING_LENGTH + MAX_INSPECTOR_NAME_LENGTH // inspector name
-        + PREFIXED_STRING_LENGTH + MAX_INSPECTED_LENGTH // inspected status
         + PREFIXED_STRING_LENGTH + MAX_ICOMMENT_LENGTH // inspector's comment
         + PREFIXED_STRING_LENGTH + MAX_MAINTENANCE_BATCH_LENGTH // maintenance batch
         + PREFIXED_STRING_LENGTH + MAX_VESSEL_PART_PUBLIC_KEY_FKEY_LENGTH; // vessel part public key
@@ -551,12 +535,12 @@ pub enum ErrorConfig {
     #[msg("Only maximum of 20 characters can be provided for the vessel imo number")]
     CompanyAdminVesselIMOTooLong,
     // validator record errors
-    #[msg("Only maximum of 20 characters can be provided for the validator designation")]
-    ValidatorDesignationTooLong,
     #[msg("Only maximum of 3 characters can be provided for the validated status")]
-    ValidatedStatusTooLong,
+    ValidatorStatusTooLong,
     #[msg("Only maximum of 300 characters can be provided for the validator's comment")]
     ValidatorCommentTooLong,
+    #[msg("Only maximum of 20 characters can be provided for the validator's vessel imo")]
+    ValidatorIMONumberTooLong,
     // service provider record errors
     #[msg("Only maximum of 50 characters can be provided for the provider name")]
     ProviderNameTooLong,
@@ -569,10 +553,6 @@ pub enum ErrorConfig {
     #[msg("Only maximum of 20 characters can be provided for the warranty code")]
     WarrantyCodeTooLong,
     // inspector record errors
-    #[msg("Only maximum of 50 characters can be provided for the inspector name")]
-    InspectorNameTooLong,
-    #[msg("Only maximum of 3 characters can be provided for the inspected status")]
-    InspectorStatusTooLong,
     #[msg("Only maximum of 300 characters can be provided for the inspector's comment")]
     InspectorCommentTooLong,
     #[msg("Only maximum of 50 characters can be provided for the maintenance batch")]

@@ -5,8 +5,6 @@ export class Inspection {
         this.publicKey = publicKey
         this.author = accountData.author
         this.timestamp = accountData.timestamp.toString()
-        this.inspector_name = accountData.inspectorName
-        this.inspected = accountData.inspected
         this.i_comment = accountData.iComment
         this.maintenance_batch = accountData.maintenanceBatch
         this.vessel_part_public_key_fkey = accountData.vesselPartPublicKeyFkey

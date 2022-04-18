@@ -36,10 +36,14 @@ const LoginPage = ({ wallet }) => {
                 ) {
                     if (user.author_key === walletPublicKey) {
                         navigate(`/home?user_key=${user.key}&usertype=${user.designation}`)
+                    } else {
+                        setFormErrors({
+                            login_failed: "invalid wallet"
+                        })
                     }
                 } else {
                     setFormErrors({
-                        login_failed: "please check the wallet or cridentials"
+                        login_failed: "please check the cridentials"
                     })
                 }
             });
@@ -99,7 +103,6 @@ const LoginPage = ({ wallet }) => {
                               onChange={handleChange}
                             />
                             <label className="error-text col-form-label">{formErrors.license_number}</label>
-                            <label className="error-text col-form-label">{formErrors.wallet_invalid}</label>
                             <label className="error-text col-form-label">{formErrors.login_failed}</label>
                         </div>
                     </div>

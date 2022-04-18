@@ -4,7 +4,7 @@ import { storeInspection } from '../../apis/store-inspection';
 const InspectionRecordStoreModal = ({ wallet, inspectorData, vesselPartPubKey, dataLoading, closeModal }) => {
     const initialValues = {
         inspector_name: inspectorData?.name,
-        inspected: "Yes",
+        inspector_license_number: inspectorData?.license_number,
         i_comment: "",
         maintenance_batch: "",
         vessel_part_public_key_fkey: vesselPartPubKey
@@ -19,9 +19,7 @@ const InspectionRecordStoreModal = ({ wallet, inspectorData, vesselPartPubKey, d
         if(Object.keys(formErrors).length === 0 && isSubmit) {
             const injectRecordData = async() => {
                 const response = await storeInspection (
-                    wallet,  
-                    inspectionRecordData.inspector_name, 
-                    inspectionRecordData.inspected,
+                    wallet,
                     inspectionRecordData.i_comment,
                     inspectionRecordData.maintenance_batch,
                     inspectionRecordData.vessel_part_public_key_fkey
@@ -55,8 +53,8 @@ const InspectionRecordStoreModal = ({ wallet, inspectorData, vesselPartPubKey, d
         if(!inspectionValues.inspector_name){
             errors.inspector_name = "inspector name is required";
         }
-        if(!inspectionValues.inspected){
-            errors.inspected = "inspected status is required";
+        if(!inspectionValues.inspector_license_number){
+            errors.inspector_license_number = "inspector license is required";
         }
         if(!inspectionValues.i_comment){
             errors.i_comment = "comment is required";
@@ -87,21 +85,14 @@ const InspectionRecordStoreModal = ({ wallet, inspectorData, vesselPartPubKey, d
                             </div>
                         </div>
                         <div className="form-group row">
-                            <label className="col-sm-4 col-form-label">Inspected</label>
+                            <label className="col-sm-4 col-form-label">Inspector License</label>
                             <div className="col-sm-8">
-                                <select
-                                    className="form-control"
-                                    onChange={handleChange}
-                                    name="inspected"
-                                >
-                                    <option value="Yes">
-                                        Yes
-                                    </option>
-                                    <option value="No">
-                                        No
-                                    </option>
-                                </select>
-                                <label className="error-text col-form-label">{formErrors.inspected}</label>
+                                <input className="form-control" type="text" name="inspector_license_number"
+                                  placeholder='Enter Inspector License'
+                                  value={inspectorData?.license_number}
+                                  readOnly
+                                />
+                                <label className="error-text col-form-label">{formErrors.inspector_license_number}</label>
                             </div>
                         </div>
                         <div className="form-group row">
