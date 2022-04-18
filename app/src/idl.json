@@ -171,14 +171,6 @@
       ],
       "args": [
         {
-          "name": "providerName",
-          "type": "string"
-        },
-        {
-          "name": "partId",
-          "type": "string"
-        },
-        {
           "name": "partDescription",
           "type": "string"
         },
@@ -188,6 +180,10 @@
         },
         {
           "name": "warrantyCode",
+          "type": "string"
+        },
+        {
+          "name": "vesselPartPublicKeyFkey",
           "type": "string"
         }
       ]
@@ -247,10 +243,6 @@
       ],
       "args": [
         {
-          "name": "serviceName",
-          "type": "string"
-        },
-        {
           "name": "deliveredAddress",
           "type": "string"
         },
@@ -260,6 +252,10 @@
         },
         {
           "name": "warehouse",
+          "type": "string"
+        },
+        {
+          "name": "vesselPartPublicKeyFkey",
           "type": "string"
         }
       ]
@@ -404,14 +400,6 @@
             "type": "i64"
           },
           {
-            "name": "providerName",
-            "type": "string"
-          },
-          {
-            "name": "partId",
-            "type": "string"
-          },
-          {
             "name": "partDescription",
             "type": "string"
           },
@@ -421,6 +409,10 @@
           },
           {
             "name": "warrantyCode",
+            "type": "string"
+          },
+          {
+            "name": "vesselPartPublicKeyFkey",
             "type": "string"
           }
         ]
@@ -468,10 +460,6 @@
             "type": "i64"
           },
           {
-            "name": "serviceName",
-            "type": "string"
-          },
-          {
             "name": "deliveredAddress",
             "type": "string"
           },
@@ -481,6 +469,10 @@
           },
           {
             "name": "warehouse",
+            "type": "string"
+          },
+          {
+            "name": "vesselPartPublicKeyFkey",
             "type": "string"
           }
         ]
@@ -565,63 +557,58 @@
     },
     {
       "code": 6015,
-      "name": "ProviderNameTooLong",
-      "msg": "Only maximum of 50 characters can be provided for the provider name"
-    },
-    {
-      "code": 6016,
-      "name": "PartIdTooLong",
-      "msg": "Only maximum of 30 characters can be provided for the part_id"
-    },
-    {
-      "code": 6017,
       "name": "PartDescriptionTooLong",
       "msg": "Only maximum of 200 characters can be provided for the part description"
     },
     {
-      "code": 6018,
+      "code": 6016,
       "name": "PurchasedDateTooLong",
       "msg": "Only maximum of 10 characters can be provided for the purchased data"
     },
     {
-      "code": 6019,
+      "code": 6017,
       "name": "WarrantyCodeTooLong",
       "msg": "Only maximum of 20 characters can be provided for the warranty code"
     },
     {
-      "code": 6020,
+      "code": 6018,
+      "name": "PartForeignKeyTooLong",
+      "msg": "Only maximum of 32 characters can be provided for the part id"
+    },
+    {
+      "code": 6019,
       "name": "InspectorCommentTooLong",
       "msg": "Only maximum of 300 characters can be provided for the inspector's comment"
     },
     {
-      "code": 6021,
+      "code": 6020,
       "name": "InspectorMaintenanceBatchTooLong",
       "msg": "Only maximum of 50 characters can be provided for the maintenance batch"
     },
     {
-      "code": 6022,
+      "code": 6021,
       "name": "InspectorVesselPartPublicKeyTooLong",
-      "msg": "Only maximum of 30 characters can be provided for the vessel part public key"
+      "msg": "Only maximum of 32 characters can be provided for the vessel part public key"
     },
     {
-      "code": 6023,
-      "name": "DeliveryServiceNameTooLong",
-      "msg": "Only maximum of 50 characters can be provided for the delivery service name"
-    },
-    {
-      "code": 6024,
+      "code": 6022,
       "name": "DeliveredAddressTooLong",
       "msg": "Only maximum of 120 characters can be provided for the delivered address"
     },
     {
-      "code": 6025,
+      "code": 6023,
       "name": "DeliveredDateTooLong",
       "msg": "Only maximum of 10 characters can be provided for the delivered date"
     },
     {
-      "code": 6026,
+      "code": 6024,
       "name": "WarehouseNameTooLong",
       "msg": "Only maximum of 50 characters can be provided for the warehouse"
+    },
+    {
+      "code": 6025,
+      "name": "DeliveryVesselPartKeyTooLong",
+      "msg": "Only maximum of 32 characters can be provided for the vessel part public key"
     }
   ],
   "metadata": {

@@ -104,16 +104,14 @@ a:hover {
 }
 .card-black {
   background: #1B1A17;
-  color: #F5DEB3;
   margin: auto;
   min-height: 100vh;
   border-radius: 25px;
 }
-.card-wheat {
-  background-image: linear-gradient(180deg, #F5DEB3 0%, #e4c196 100%);
+.card-grey {
+  background-image: linear-gradient(180deg, #e6e6e6 0%, #dfdfdb 100%);
   border-radius: 10px;
   min-height: 25vh;
-  color: #417D7A;
 }
 .maintenance-record-card {
   background-image: linear-gradient(180deg, #19201F 0%, #02090A 100%);
@@ -123,7 +121,6 @@ a:hover {
 }
 .maintenance-part-card {
   border: 1px solid #417D7A;
-  color: #417D7A;
   border-radius: 10px;
   min-height: 20vh;
 }
@@ -151,20 +148,17 @@ a:hover {
 .bold-text {
   font-weight: 500;
 }
+.color-wheat {
+  color: #F5DEB3;
+}
 .burn-orange-color {
   color: #FF4C29;
 }
-.burn-yellow-color {
-  color: #F0A500;
-}
-.burn-purple-color {
-  color: #EB033D;
+.dark-navy-color {
+  color: #4B6587;;
 }
 .teal-color {
   color: #24CA97;
-}
-.sky-blue-color {
-  color: #32E0C4;
 }
 .green-color {
   color: #B2D430;

@@ -62,7 +62,7 @@ const SupplyChain = ({ wallet }) => {
                 if(vesselPart.vessel_part_serial_key === vesselPartSerialKey && 
                     vesselPart.vessel_imo_fkey === vesselPartImoNumber) {
                     setRetrievedVesselPartData({
-                        vessel_part_public_key: vesselPart.key,
+                        vessel_part_public_key: vesselPart.key_sliced,
                         vessel_part_name: vesselPart.vessel_part,
                         vessel_part_key: vesselPart.vessel_part_serial_key,
                         vessel_part_created_date: vesselPart.created_at,
@@ -76,7 +76,6 @@ const SupplyChain = ({ wallet }) => {
     
     const renderInspections = () => {
         const inspection = inspectionData?.map((inspection, idx) => {
-            console.log(inspection.author_key)
             if(inspection.vessel_part_public_key_fkey === retrievedVesselPartData?.vessel_part_public_key) {
                 return (
                     <div key={idx} className="supply-chain-card my-3 mx-3">
@@ -154,7 +153,7 @@ const SupplyChain = ({ wallet }) => {
                     <WalletMultiButton />
                 </div>
             </div>
-            <div className="card-wheat shadow-sm py-3 px-5 mt-4">
+            <div className="card-grey dark-navy-color shadow-sm py-3 px-5 mt-4">
                 <div className="primary-text">
                    Vessel Part
                 </div>
@@ -175,7 +174,8 @@ const SupplyChain = ({ wallet }) => {
                     </div>
                 </div>
             </div>
-            <div className="card-black shadow-sm py-3 px-5 mt-4">
+            
+            <div className="card-black color-wheat shadow-sm py-3 px-5 mt-4">
                 <div className="primary-text">
                    Inspection Procedures
                 </div>
@@ -190,6 +190,24 @@ const SupplyChain = ({ wallet }) => {
                 
                 <div className="content-height mt-3">
                     {renderInspections()}
+                </div>
+            </div>
+
+            <div className="card-black shadow-sm py-3 px-5 mt-4">
+                <div className="primary-text teal-color">
+                   Service Provider Vessel
+                </div>
+               
+                {loginUserData?.designation === "internal_inspector" && (
+                    <button 
+                    onClick={() => setInspectionModalOpen(true)} 
+                    className="actium-maintenance-button ml-2 mt-3">
+                        Add Vessel Part Details
+                    </button>
+                )}
+                
+                <div className="content-height mt-3">
+                    content of validators
                 </div>
             </div>
         </div>

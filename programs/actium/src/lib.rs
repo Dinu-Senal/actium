@@ -136,22 +136,15 @@ pub mod actium {
     // service provider record
     pub fn store_service_provider_record(
         ctx: Context<StoreServiceProviderRecord>,
-        provider_name: String,
-        part_id: String,
         part_description: String,
         date_purchased: String,
         warranty_code: String,
+        vessel_part_public_key_fkey: String,
     ) -> ProgramResult {
         let serviceproviderrecord: &mut Account<ServiceProviderRecord> = &mut ctx.accounts.serviceproviderrecord;
         let author: &Signer = &ctx.accounts.author;
         let clock: Clock = Clock::get().unwrap();
 
-        if provider_name.chars().count() > 50 {
-            return Err(ErrorConfig::ProviderNameTooLong.into())
-        }
-        if part_id.chars().count() > 30 {
-            return Err(ErrorConfig::PartIdTooLong.into())
-        }
         if part_description.chars().count() > 200 {
             return Err(ErrorConfig::PartDescriptionTooLong.into())
         }
@@ -161,14 +154,16 @@ pub mod actium {
         if warranty_code.chars().count() > 20 {
             return Err(ErrorConfig::WarrantyCodeTooLong.into())
         }
+        if vessel_part_public_key_fkey.chars().count() > 32 {
+            return Err(ErrorConfig::PartForeignKeyTooLong.into())
+        }
 
         serviceproviderrecord.author = *author.key;
         serviceproviderrecord.timestamp = clock.unix_timestamp;
-        serviceproviderrecord.provider_name = provider_name;
-        serviceproviderrecord.part_id = part_id;
         serviceproviderrecord.part_description = part_description;
         serviceproviderrecord.date_purchased = date_purchased;
         serviceproviderrecord.warranty_code = warranty_code;
+        serviceproviderrecord.vessel_part_public_key_fkey = vessel_part_public_key_fkey;
         Ok(())
     }
     // inspector record
@@ -188,7 +183,7 @@ pub mod actium {
         if maintenance_batch.chars().count() > 50 {
             return Err(ErrorConfig::InspectorMaintenanceBatchTooLong.into())
         }
-        if vessel_part_public_key_fkey.chars().count() > 50 {
+        if vessel_part_public_key_fkey.chars().count() > 32 {
             return Err(ErrorConfig::InspectorVesselPartPublicKeyTooLong.into())
         }
 
@@ -202,18 +197,15 @@ pub mod actium {
     // delivery service record
     pub fn store_delivery_service_record(
         ctx: Context<StoreDeliveryServiceRecord>,
-        service_name: String,
         delivered_address: String,
         delivered_date: String,
-        warehouse: String
+        warehouse: String,
+        vessel_part_public_key_fkey: String
     ) -> ProgramResult {
         let deliveryservicerecord: &mut Account<DeliveryServiceRecord> = &mut ctx.accounts.deliveryservicerecord;
         let author: &Signer = &mut ctx.accounts.author;
         let clock: Clock = Clock::get().unwrap();
 
-        if service_name.chars().count() > 50 {
-            return Err(ErrorConfig::DeliveryServiceNameTooLong.into())
-        }
         if delivered_address.chars().count() > 120 {
             return Err(ErrorConfig::DeliveredAddressTooLong.into())
         }
@@ -223,13 +215,16 @@ pub mod actium {
         if warehouse.chars().count() > 50 {
             return Err(ErrorConfig::WarehouseNameTooLong.into())
         }
+        if vessel_part_public_key_fkey.chars().count() > 32 {
+            return Err(ErrorConfig::DeliveryVesselPartKeyTooLong.into())
+        }
 
         deliveryservicerecord.author = *author.key;
         deliveryservicerecord.timestamp = clock.unix_timestamp;
-        deliveryservicerecord.service_name = service_name;
         deliveryservicerecord.delivered_address = delivered_address;
         deliveryservicerecord.delivered_date = delivered_date;
         deliveryservicerecord.warehouse = warehouse;
+        deliveryservicerecord.vessel_part_public_key_fkey = vessel_part_public_key_fkey;
         Ok(())
     }
 }
@@ -363,12 +358,10 @@ pub struct ValidatorRecord {
 pub struct ServiceProviderRecord {
     pub author: Pubkey,
     pub timestamp: i64,
-    pub provider_name: String,
-    pub part_id: String,
     pub part_description: String,
     pub date_purchased: String,
     pub warranty_code: String,
-    /* pub vessel_address: Pubkey */
+    pub vessel_part_public_key_fkey: String
 }
 
 // structure of inspector record account
@@ -386,11 +379,10 @@ pub struct InspectorRecord {
 pub struct DeliveryServiceRecord {
     pub author: Pubkey,
     pub timestamp: i64,
-    pub service_name: String,
     pub delivered_address: String,
     pub delivered_date: String,
     pub warehouse: String,
-    /* pub vessel_address: Pubkey */
+    pub vessel_part_public_key_fkey: String
 }
 
 /* SIZING OF ACCOUNTS */
@@ -420,20 +412,19 @@ const MAX_VALIDATED_LENGTH: usize = 3 * 4; // stores maximum 3 chars
 const MAX_VCOMMENT_LENGTH: usize = 300 * 4; // stores maximum 300 chars
 const MAX_V_VESSEL_IMO_FKEY_LENGTH: usize = 20 * 4; // stores maximum 20 chars
 // service provider record constants
-const MAX_PROVIDER_NAME_LENGTH: usize = 50 * 4; // store maximum 50 chars
-const MAX_PART_ID_LENGTH: usize = 30 * 4; // store maximum 30 chars
 const MAX_PART_DESCRIPTION_LENGTH: usize = 200 * 4; // store maximum 200 chars
 const MAX_DATE_PURCHASED_LENGTH: usize = 10 * 4; // store maximum 10 chars
 const MAX_WARRANTY_CODE_LENGTH: usize = 20 * 4; // store maximum 20 chars
+const MAX_S_VESSEL_PART_PUBLIC_KEY_FKEY_LENGTH: usize = 32 * 4; // stores maximum 32 chars
 // inspector record constants
 const MAX_ICOMMENT_LENGTH: usize = 300 * 4; // stores maximum 300 chars
 const MAX_MAINTENANCE_BATCH_LENGTH: usize = 50 * 4; // stores maximum 50 chars
 const MAX_VESSEL_PART_PUBLIC_KEY_FKEY_LENGTH: usize = 32 * 4; // stores maximum 32 chars
 // delivery service record constants
-const MAX_DELIVERY_SERVICE_NAME_LENGTH: usize = 50 * 4; // store maximum 50 chars
 const MAX_DELIVERED_ADDRESS_LENGTH: usize = 120 * 4; // store maximum 120 chars
 const MAX_DELIVERED_DATE_LENGTH: usize = 10 * 4; // store maximum 10 chars
 const MAX_WAREHOUSE_LENGTH: usize = 50 * 4; // store maximum 50 chars
+const MAX_D_VESSEL_PART_PUBLIC_KEY_FKEY_LENGTH: usize = 32 * 4; // store maximum 32 chars
 
 // configuring total size of the user account
 impl User {
@@ -479,11 +470,10 @@ impl ServiceProviderRecord {
     const LEN: usize = DISCRIMINATOR_LENGTH
         + PUBLIC_KEY_LENGTH // author
         + TIMESTAMP_LENGTH // timestamp
-        + PREFIXED_STRING_LENGTH + MAX_PROVIDER_NAME_LENGTH // provider name
-        + PREFIXED_STRING_LENGTH + MAX_PART_ID_LENGTH // maintenance part id
         + PREFIXED_STRING_LENGTH + MAX_PART_DESCRIPTION_LENGTH // maintenance part description
         + PREFIXED_STRING_LENGTH + MAX_DATE_PURCHASED_LENGTH // maintenance part purchased date
-        + PREFIXED_STRING_LENGTH + MAX_WARRANTY_CODE_LENGTH; // maintenance part warranty code
+        + PREFIXED_STRING_LENGTH + MAX_WARRANTY_CODE_LENGTH // maintenance part warranty code
+        + PREFIXED_STRING_LENGTH + MAX_S_VESSEL_PART_PUBLIC_KEY_FKEY_LENGTH; // maintenance part id
 }
 // configuring total size of the inspector record account
 impl InspectorRecord {
@@ -499,10 +489,10 @@ impl DeliveryServiceRecord {
     const LEN: usize = DISCRIMINATOR_LENGTH
         + PUBLIC_KEY_LENGTH // author
         + TIMESTAMP_LENGTH // timestamp
-        + PREFIXED_STRING_LENGTH + MAX_DELIVERY_SERVICE_NAME_LENGTH // delivery service name
         + PREFIXED_STRING_LENGTH + MAX_DELIVERED_ADDRESS_LENGTH // delivered address
         + PREFIXED_STRING_LENGTH + MAX_DELIVERED_DATE_LENGTH // delivered date
-        + PREFIXED_STRING_LENGTH + MAX_WAREHOUSE_LENGTH; // warehouse
+        + PREFIXED_STRING_LENGTH + MAX_WAREHOUSE_LENGTH // warehouse
+        + PREFIXED_STRING_LENGTH + MAX_D_VESSEL_PART_PUBLIC_KEY_FKEY_LENGTH; // vessel part public key
 }
 
 #[error]
@@ -542,30 +532,28 @@ pub enum ErrorConfig {
     #[msg("Only maximum of 20 characters can be provided for the validator's vessel imo")]
     ValidatorIMONumberTooLong,
     // service provider record errors
-    #[msg("Only maximum of 50 characters can be provided for the provider name")]
-    ProviderNameTooLong,
-    #[msg("Only maximum of 30 characters can be provided for the part_id")]
-    PartIdTooLong,
     #[msg("Only maximum of 200 characters can be provided for the part description")]
     PartDescriptionTooLong,
     #[msg("Only maximum of 10 characters can be provided for the purchased data")]
     PurchasedDateTooLong,
     #[msg("Only maximum of 20 characters can be provided for the warranty code")]
     WarrantyCodeTooLong,
+    #[msg("Only maximum of 32 characters can be provided for the part id")]
+    PartForeignKeyTooLong,
     // inspector record errors
     #[msg("Only maximum of 300 characters can be provided for the inspector's comment")]
     InspectorCommentTooLong,
     #[msg("Only maximum of 50 characters can be provided for the maintenance batch")]
     InspectorMaintenanceBatchTooLong,
-    #[msg("Only maximum of 30 characters can be provided for the vessel part public key")]
+    #[msg("Only maximum of 32 characters can be provided for the vessel part public key")]
     InspectorVesselPartPublicKeyTooLong,
     // delivery service record errors
-    #[msg("Only maximum of 50 characters can be provided for the delivery service name")]
-    DeliveryServiceNameTooLong,
     #[msg("Only maximum of 120 characters can be provided for the delivered address")]
     DeliveredAddressTooLong,
     #[msg("Only maximum of 10 characters can be provided for the delivered date")]
     DeliveredDateTooLong,
     #[msg("Only maximum of 50 characters can be provided for the warehouse")]
     WarehouseNameTooLong,
+    #[msg("Only maximum of 32 characters can be provided for the vessel part public key")]
+    DeliveryVesselPartKeyTooLong,
 }

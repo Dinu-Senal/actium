@@ -13,6 +13,11 @@ export class Inspection {
     get key() {
         return this.publicKey.toBase58()
     }
+    
+    get key_sliced() {
+        const publickey = this.publicKey.toBase58()
+        return publickey.slice(0,4) + '..' + publickey.slice(-4)
+    }
 
     get author_key() {
         return this.author.toBase58()
