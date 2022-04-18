@@ -9,7 +9,7 @@ export class Inspection {
         this.inspected = accountData.inspected
         this.i_comment = accountData.iComment
         this.maintenance_batch = accountData.maintenanceBatch
-        this.vessel_part_id_fkey = accountData.vesselPartIdFkey
+        this.vessel_part_public_key_fkey = accountData.vesselPartPublicKeyFkey
     }
 
     get key() {
@@ -35,6 +35,8 @@ export class Inspection {
     }
 
     get created_ago() {
+        var relativeTime = require('dayjs/plugin/relativeTime')
+        dayjs.extend(relativeTime)
         return dayjs.unix(this.timestamp).fromNow()
     }
 }

@@ -6,6 +6,6 @@ import { workspace } from '../constants';
 export const getInspection = async (wallet) => {
     const provider = await getProvider(wallet);
     const program = new Program(workspace.programIdl, workspace.programID, provider);
-    const inspections = await program.account.inspectorrecord.all();
+    const inspections = await program.account.inspectorRecord.all();
     return inspections.map(inspection => new Inspection(inspection.publicKey, inspection.account));
 }

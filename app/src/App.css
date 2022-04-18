@@ -15,6 +15,10 @@ a:hover {
 .main-box {
   position: relative;
 }
+.content-height {
+  height: 70vh;
+  overflow-y: scroll;
+}
 
 /* table */
 .table {
@@ -98,11 +102,36 @@ a:hover {
   min-height: 100vh;
   border-radius: 25px;
 }
+.card-black {
+  background: #1B1A17;
+  color: #F5DEB3;
+  margin: auto;
+  min-height: 100vh;
+  border-radius: 25px;
+}
+.card-wheat {
+  background-image: linear-gradient(180deg, #F5DEB3 0%, #e4c196 100%);
+  border-radius: 10px;
+  min-height: 25vh;
+  color: #417D7A;
+}
 .maintenance-record-card {
   background-image: linear-gradient(180deg, #19201F 0%, #02090A 100%);
   border-radius: 10px;
   min-height: 33vh;
   color: #FFFFFF;
+}
+.maintenance-part-card {
+  border: 1px solid #417D7A;
+  color: #417D7A;
+  border-radius: 10px;
+  min-height: 20vh;
+}
+.supply-chain-card {
+  border: 1px solid #F5DEB3;
+  color: #F5DEB3;
+  border-radius: 10px;
+  min-height: 33vh;
 }
 
 /* text */
@@ -185,10 +214,23 @@ a:hover {
   color: #FFF;
   transition-duration: 0.6s;
 }
+.actium-wheat-button {
+  cursor: pointer !important;
+  background: #F5F5F5;
+  border: none;
+  text-transform: uppercase;
+  color: #000;
+  border-radius: 25px;
+  padding: 5px 15px 5px 15px;
+}
+.actium-wheat-button:hover {
+  background: #F5DEB3;
+  transition-duration: 0.6s;
+}
 .actium-maintenance-button {
   cursor: pointer !important;
   background: #F5F5F5;
-  border: 1px solid #000000;
+  border: none;
   text-transform: uppercase;
   color: #000;
   border-radius: 25px;

@@ -229,7 +229,7 @@
           "type": "string"
         },
         {
-          "name": "vesselPartIdFkey",
+          "name": "vesselPartPublicKeyFkey",
           "type": "string"
         }
       ]
@@ -464,7 +464,7 @@
             "type": "string"
           },
           {
-            "name": "vesselPartSerialKeyFkey",
+            "name": "vesselPartPublicKeyFkey",
             "type": "string"
           }
         ]
@@ -626,8 +626,8 @@
     },
     {
       "code": 6024,
-      "name": "InspectorVesselPartSerialKeyTooLong",
-      "msg": "Only maximum of 30 characters can be provided for the vessel part serial key"
+      "name": "InspectorVesselPartPublicKeyTooLong",
+      "msg": "Only maximum of 30 characters can be provided for the vessel part public key"
     },
     {
       "code": 6025,

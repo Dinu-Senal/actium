@@ -1,6 +1,8 @@
 import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { getUsers } from '../apis/get-users';
+import { getWallet } from "../apis/get-wallet";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 const LoginPage = ({ wallet }) => {
     const navigate = useNavigate();
@@ -13,22 +15,31 @@ const LoginPage = ({ wallet }) => {
     const [ loginData, setLoginData ] = useState(initialValues);
     const [ formErrors, setFormErrors ] = useState({});
     const [ isSubmit, setIsSubmit ] = useState(false);
-
+    const [ walletPublicKey, setWalletPublicKey ] = useState(null);
+    
     useEffect(() => {
         loadUser();
     }, [wallet] );
 
+    const retrieveWalletPubkey = async () => {
+        const walletKey = await getWallet(wallet);
+        setWalletPublicKey(walletKey)
+    }
+
     useEffect(() => {
+        retrieveWalletPubkey()
         if(Object.keys(formErrors).length === 0 && isSubmit) {
             userData.forEach(user => {
                 if(
                     user.full_name === loginData.full_name && 
                     user.license_number === loginData.license_number
                 ) {
-                    navigate(`/home?user_key=${user.key}&usertype=${user.designation}`)
+                    if (user.author_key === walletPublicKey) {
+                        navigate(`/home?user_key=${user.key}&usertype=${user.designation}`)
+                    }
                 } else {
                     setFormErrors({
-                        login_failed: "please check again"
+                        login_failed: "please check the wallet or cridentials"
                     })
                 }
             });
@@ -88,16 +99,21 @@ const LoginPage = ({ wallet }) => {
                               onChange={handleChange}
                             />
                             <label className="error-text col-form-label">{formErrors.license_number}</label>
+                            <label className="error-text col-form-label">{formErrors.wallet_invalid}</label>
                             <label className="error-text col-form-label">{formErrors.login_failed}</label>
                         </div>
                     </div>
-                    
-                    <button className="actium-main-button mx-3">Login</button>
+                    <div className="inline-row my-4">
+                        <button className="actium-main-button mx-3">Login</button>
+                        <div className="ml-2">
+                            <WalletMultiButton />
+                        </div>
+                    </div>
                     <div className="mt-3">
                         Don't have an account? 
                         <Link to='/register'> Register</Link>
                     </div>
-                    <div className="mt-3">
+                    <div className="mt-3 mb-5">
                         Wan't only to view vessels?
                         <Link to='/home'> View Vessels</Link>
                     </div>

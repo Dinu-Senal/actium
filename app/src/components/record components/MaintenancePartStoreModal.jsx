@@ -15,7 +15,6 @@ const MaintenancePartModalOpen = ({ vesselIMO, dataLoading, wallet, closeModal }
     const [ isSubmit, setIsSubmit ] = useState(false);
     const [ isStoringSuccess, setIsStoringSuccess ] = useState(false);
 
-
     const loadVesselParts = async () => {
         const vesselsParts = await getVesselParts(wallet);
         setBlockchainVesselPartData(vesselsParts);

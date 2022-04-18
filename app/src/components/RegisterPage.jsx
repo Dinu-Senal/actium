@@ -2,10 +2,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { getUsers } from '../apis/get-users';
 import { storeUser } from "../apis/store-user";
-import { Program } from '@project-serum/anchor';
-import { getProvider } from '../apis/get-provider';
-import { workspace } from '../constants';
 import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { getWallet } from "../apis/get-wallet";
 
 const RegisterPage = ({ wallet }) => {
     const navigate = useNavigate();
@@ -24,15 +22,6 @@ const RegisterPage = ({ wallet }) => {
     const [ isSubmit, setIsSubmit ] = useState(false);
     const [ isStoringSuccess, setIsStoringSuccess ] = useState(false);
     const [ walletPublicKey, setWalletPublicKey ] = useState(null);
- 
-
-    const getWallet = async () => {
-        // getting wallet address
-        const provider = await getProvider(wallet);
-        const program = new Program(workspace.programIdl, workspace.programID, provider);
-        const walletKey = program.provider.wallet.publicKey
-        setWalletPublicKey(walletKey.toBase58())
-    }
 
     const loadUser = async () => {
         const users = await getUsers(wallet);
@@ -43,8 +32,13 @@ const RegisterPage = ({ wallet }) => {
         loadUser();
     }, [wallet, isStoringSuccess] )
   
+    const retrieveWalletPubkey = async () => {
+        const walletKey = await getWallet(wallet);
+        setWalletPublicKey(walletKey)
+    }
+
     useEffect(() => {
-        getWallet();
+        retrieveWalletPubkey();
         if(Object.keys(formErrors).length === 0 && isSubmit) {
             let walletUsed;
             const registerFailed = userData.some(user => {
@@ -141,7 +135,7 @@ const RegisterPage = ({ wallet }) => {
                         <label className="error-text col-form-label">{formErrors.full_name}</label>
                     </div>
                 </div>
-                 <div className="form-group row">
+                <div className="form-group row">
                     <label className="col-sm-4 text-left">Designation</label>
                     <div className="col-sm-8">
                         <select

@@ -4,7 +4,6 @@ import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { getVessels } from '../apis/get-vessels';
 import { getUsers } from '../apis/get-users';
 import { getVesselParts } from '../apis/get-vessel-parts';
-import InspectionRecordStoreModal from './record components/InspectionRecordStoreModal';
 import MaintenancePartStoreModal from './record components/MaintenancePartStoreModal';
 
 const VesselPage = ({ wallet }) => {
@@ -19,7 +18,7 @@ const VesselPage = ({ wallet }) => {
 
     const [ maintenancePartDataLoaded, setMaintenancePartDataLoaded ] = useState(false);
     const [ maintenancePartModalOpen, setMaintenancePartModalOpen ] = useState(false);
-    const [ inspectionModalOpen, setInspectionModalOpen ] = useState(false);
+    
     const [ seaworthinessModalOpen, setSeaworthinessModalOpen ] = useState(false);
 
     const [ searchParams ] = useSearchParams();
@@ -35,7 +34,6 @@ const VesselPage = ({ wallet }) => {
         const users = await getUsers(wallet);
         setUserData(users);
     }
-
     const loadVesselParts = async () => {
         const vesselsParts = await getVesselParts(wallet);
         setVesselPartData(vesselsParts);
@@ -67,7 +65,8 @@ const VesselPage = ({ wallet }) => {
                 if(userKey === user.key) {
                     setReleventUserData({
                         user_author: user.author_key, 
-                        user_designation: user.designation
+                        user_designation: user.designation,
+                        user_public_key: user.key,
                     })
                 }
             })
@@ -168,7 +167,7 @@ const VesselPage = ({ wallet }) => {
                                             <th>{vesselPart.vessel_imo_fkey}</th>
                                             <th className="pt-0">
                                                 <button 
-                                                    onClick={() => navigate(`/supplychain`)}
+                                                    onClick={() => navigate(`/supplychain?user_key=${userKey}&serial_key=${vesselPart.vessel_part_serial_key}&imo_number=${vesselPart.vessel_imo_fkey}`)}
                                                     className="actium-maintenance-button ml-2 mt-3" 
                                                 >
                                                     View Supply Chain
@@ -189,7 +188,6 @@ const VesselPage = ({ wallet }) => {
     return (
         <div style={{overflowY: 'unset'}} className={`${(
             maintenancePartModalOpen ||
-            inspectionModalOpen ||
             seaworthinessModalOpen 
             ) ? "record-container" : "vessel-page-content py-3 px-5"}`
         }>
@@ -199,11 +197,6 @@ const VesselPage = ({ wallet }) => {
                     dataLoading={loaded => setMaintenancePartDataLoaded(loaded)}
                     vesselIMO={relevantVesselData?.imo_number}
                     closeModal={setMaintenancePartModalOpen}
-            />
-            )}
-            {inspectionModalOpen && (
-                <InspectionRecordStoreModal 
-                    closeModal={setInspectionModalOpen}
             />
             )}
             {seaworthinessModalOpen && (
@@ -223,7 +216,7 @@ const VesselPage = ({ wallet }) => {
                         <button 
                             className="actium-main-button ml-2" 
                             onClick={() => setMaintenancePartModalOpen(true)}>
-                                Add Maintenance
+                                Add Maintenance Part
                         </button>
                     )}
 
@@ -282,11 +275,7 @@ const VesselPage = ({ wallet }) => {
                 <div className="mt-3">
                     {renderMaintenanceData()}
                 </div>
-                <button 
-                    onClick={() => setInspectionModalOpen(true)} 
-                    className="actium-maintenance-button ml-2">
-                        Inspection
-                </button>
+               
                 
             </div>
         </div>

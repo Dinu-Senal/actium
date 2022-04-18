@@ -564,7 +564,7 @@ describe('actium', () => {
     assert.equal(inspectorRecordAccount.inspected, 'yes');
     assert.equal(inspectorRecordAccount.iComment, 'have to do more repairs');
     assert.equal(inspectorRecordAccount.maintenanceBatch, 'Batch 1');
-    assert.equal(inspectorRecordAccount.vesselPartSerialKeyFkey, '990');
+    assert.equal(inspectorRecordAccount.vesselPartPublicKeyFkey, '990');
     assert.ok(inspectorRecordAccount.timestamp);
   });
 

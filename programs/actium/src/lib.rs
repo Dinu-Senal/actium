@@ -177,7 +177,7 @@ pub mod actium {
         inspected: String,
         i_comment: String,
         maintenance_batch: String,
-        vessel_part_id_fkey: String,
+        vessel_part_public_key_fkey: String,
     ) -> ProgramResult {
         let inspectorrecord: &mut Account<InspectorRecord> = &mut ctx.accounts.inspectorrecord;
         let author: &Signer = &mut ctx.accounts.author;
@@ -195,8 +195,8 @@ pub mod actium {
         if maintenance_batch.chars().count() > 50 {
             return Err(ErrorConfig::InspectorMaintenanceBatchTooLong.into())
         }
-        if vessel_part_id_fkey.chars().count() > 50 {
-            return Err(ErrorConfig::InspectorVesselPartSerialKeyTooLong.into())
+        if vessel_part_public_key_fkey.chars().count() > 50 {
+            return Err(ErrorConfig::InspectorVesselPartPublicKeyTooLong.into())
         }
 
         inspectorrecord.author = *author.key;
@@ -205,7 +205,7 @@ pub mod actium {
         inspectorrecord.inspected = inspected;
         inspectorrecord.i_comment = i_comment;
         inspectorrecord.maintenance_batch = maintenance_batch;
-        inspectorrecord.vessel_part_serial_key_fkey = vessel_part_id_fkey;
+        inspectorrecord.vessel_part_public_key_fkey = vessel_part_public_key_fkey;
         Ok(())
     }
     // delivery service record
@@ -390,7 +390,7 @@ pub struct InspectorRecord {
     pub inspected: String,
     pub i_comment: String,
     pub maintenance_batch: String,
-    pub vessel_part_serial_key_fkey: String
+    pub vessel_part_public_key_fkey: String
 }
 
 // structure of delivery service record account
@@ -442,7 +442,7 @@ const MAX_INSPECTOR_NAME_LENGTH: usize = 50 * 4; // store maximum 50 chars
 const MAX_INSPECTED_LENGTH: usize = 3 * 4; // stores maximum 3 chars
 const MAX_ICOMMENT_LENGTH: usize = 300 * 4; // stores maximum 300 chars
 const MAX_MAINTENANCE_BATCH_LENGTH: usize = 50 * 4; // stores maximum 50 chars
-const MAX_VESSEL_PART_SERIAL_KEY_FKEY_LENGTH: usize = 30 * 4; // stores maximum 30 chars
+const MAX_VESSEL_PART_PUBLIC_KEY_FKEY_LENGTH: usize = 32 * 4; // stores maximum 32 chars
 // delivery service record constants
 const MAX_DELIVERY_SERVICE_NAME_LENGTH: usize = 50 * 4; // store maximum 50 chars
 const MAX_DELIVERED_ADDRESS_LENGTH: usize = 120 * 4; // store maximum 120 chars
@@ -508,7 +508,7 @@ impl InspectorRecord {
         + PREFIXED_STRING_LENGTH + MAX_INSPECTED_LENGTH // inspected status
         + PREFIXED_STRING_LENGTH + MAX_ICOMMENT_LENGTH // inspector's comment
         + PREFIXED_STRING_LENGTH + MAX_MAINTENANCE_BATCH_LENGTH // maintenance batch
-        + PREFIXED_STRING_LENGTH + MAX_VESSEL_PART_SERIAL_KEY_FKEY_LENGTH; // vessel part serial key
+        + PREFIXED_STRING_LENGTH + MAX_VESSEL_PART_PUBLIC_KEY_FKEY_LENGTH; // vessel part public key
 }
 // configure total size of the delivery service record account
 impl DeliveryServiceRecord {
@@ -577,8 +577,8 @@ pub enum ErrorConfig {
     InspectorCommentTooLong,
     #[msg("Only maximum of 50 characters can be provided for the maintenance batch")]
     InspectorMaintenanceBatchTooLong,
-    #[msg("Only maximum of 30 characters can be provided for the vessel part serial key")]
-    InspectorVesselPartSerialKeyTooLong,
+    #[msg("Only maximum of 30 characters can be provided for the vessel part public key")]
+    InspectorVesselPartPublicKeyTooLong,
     // delivery service record errors
     #[msg("Only maximum of 50 characters can be provided for the delivery service name")]
     DeliveryServiceNameTooLong,

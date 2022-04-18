@@ -10,7 +10,7 @@ export const storeInspection = async (
     inspected, 
     i_comment,
     maintenance_batch,
-    vessel_part_id_fkey
+    vessel_part_public_key_fkey
 ) => {
     const inspection = Keypair.generate();
     const provider = await getProvider(wallet);
@@ -22,7 +22,7 @@ export const storeInspection = async (
             inspected, 
             i_comment,
             maintenance_batch,
-            vessel_part_id_fkey,
+            vessel_part_public_key_fkey,
           {
             accounts: {
               inspectorrecord: inspection.publicKey,
@@ -32,7 +32,7 @@ export const storeInspection = async (
             signers: [inspection]
           }
         );
-        await program.account.inspectorrecord.fetch(inspection.publicKey);
+        await program.account.inspectorRecord.fetch(inspection.publicKey);
         return true;
     } catch (err) {
         console.log("Transaction error: ", err);
