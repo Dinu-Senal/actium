@@ -126,10 +126,20 @@ a:hover {
 }
 .supply-chain-card {
   border: 1px solid #F5DEB3;
-  color: #F5DEB3;
   border-radius: 10px;
   min-height: 33vh;
 }
+.service-provider-card {
+  border: 1px solid #24CA97;
+  border-radius: 10px;
+  min-height: 33vh;
+}
+.delivery-service-card {
+  border: 1px solid #B2D430;
+  border-radius: 10px;
+  min-height: 33vh;
+}
+
 
 /* text */
 .landing-text {
@@ -219,6 +229,19 @@ a:hover {
 }
 .actium-wheat-button:hover {
   background: #F5DEB3;
+  transition-duration: 0.6s;
+}
+.actium-green-button {
+  cursor: pointer !important;
+  background: #F5F5F5;
+  border: none;
+  text-transform: uppercase;
+  color: #000;
+  border-radius: 25px;
+  padding: 5px 15px 5px 15px;
+}
+.actium-green-button:hover {
+  background: #B2D430;
   transition-duration: 0.6s;
 }
 .actium-maintenance-button {

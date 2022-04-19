@@ -165,7 +165,7 @@ const RegisterPage = ({ wallet }) => {
                                 Service Provider
                             </option>
                             <option value="delivery_service">
-                                Delivery_Service
+                                Delivery Service
                             </option>
                         </select>
                         <label className="error-text col-form-label">{formErrors.designation}</label>

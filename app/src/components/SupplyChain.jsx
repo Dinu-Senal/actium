@@ -2,22 +2,32 @@ import { useState, useEffect } from "react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { getVesselParts } from '../apis/get-vessel-parts';
-import InspectionRecordStoreModal from "./record components/InspectionRecordStoreModal";
 import { getUsers } from "../apis/get-users";
 import { getInspection } from '../apis/get-inspections';
+import { getServices } from "../apis/get-services";
+import { getDeliveries } from "../apis/get-deliveries";
+import InspectionRecordStoreModal from "./record components/InspectionRecordStoreModal";
+import ServiceRecordStoreModal from "./record components/ServiceRecordStoreModal";
+import DeliveryRecordStoreModal from "./record components/DeliveryRecordStoreModal";
 
 const SupplyChain = ({ wallet }) => {
     const navigate = useNavigate();
     const [ vesselPartData, setVesselPartData ] = useState([]);
     const [ userData, setUserData ] = useState([]);
     const [ inspectionData, setInspectionData ] = useState([]);
+    const [ serviceData, setServiceData ] = useState([]);
+    const [ deliveryData, setDeliveryData ] = useState([]);
 
     const [ inspectionDataLoaded, setInspectionDataLoaded ] = useState(false);
+    const [ serviceDataLoaded, setServiceDataLoaded ] = useState(false);
+    const [ deliveryDataLoaded, setDeliveryDataLoaded ] = useState(false);
 
     const [ retrievedVesselPartData, setRetrievedVesselPartData ] = useState({});
     const [ loginUserData, setLoginUserData ] = useState({});
 
     const [ inspectionModalOpen, setInspectionModalOpen ] = useState(false);
+    const [ serviceModalOpen, setServiceModalOpen ] = useState(false);
+    const [ deliveryModalOpen, setDeliveryModalOpen ] = useState(false);
 
     const [ searchParams ] = useSearchParams();
 
@@ -37,13 +47,25 @@ const SupplyChain = ({ wallet }) => {
         const inspectionData = await getInspection(wallet);
         setInspectionData(inspectionData);
     }
+    const loadServiceData = async () => {
+        const serviceData = await getServices(wallet);
+        setServiceData(serviceData)
+    }
+    const loadDeliveryData = async () => {
+        const deliveryData = await getDeliveries(wallet);
+        setDeliveryData(deliveryData);
+    }
 
     useEffect(() => {
         loadVesselParts();
         loadUserData();
         loadInspectionData();
+        loadServiceData();
+        loadDeliveryData();
         setInspectionDataLoaded(false);
-    }, [wallet, inspectionDataLoaded] );
+        setServiceDataLoaded(false);
+        setDeliveryDataLoaded(false);
+    }, [wallet, inspectionDataLoaded, serviceDataLoaded, deliveryDataLoaded] );
 
     useEffect(() => {
         const retrieveLoginUserData = () => {
@@ -82,17 +104,17 @@ const SupplyChain = ({ wallet }) => {
                         <div className="box-container mt-4">
                             <div className="main-box ml-3">
                                 <div className="subheading-text text-left px-5 mt-3">
-                                    {userData.map(user => {
+                                    {userData.map((user, u_idx) => {
                                         if(user.author_key === inspection.author_key) {
                                             return (
-                                                <>
+                                                <div key={u_idx}>
                                                     <p><span className="bold-text text-uppercase mr-2">
                                                         Inspector Name: </span> {user?.full_name}
                                                     </p>
                                                     <p><span className="bold-text text-uppercase mr-2">
-                                                        License Number: </span> {user?.license_number}
+                                                        Inspector License: </span> {user?.license_number}
                                                     </p>
-                                                </>
+                                                </div>
                                             )
                                         }
                                         return null
@@ -125,9 +147,113 @@ const SupplyChain = ({ wallet }) => {
         return inspection;
     }
 
+    const renderServiceRecords = () => {
+        const services = serviceData?.map((service, idx) => {
+            if(service.vessel_part_public_key_fkey === retrievedVesselPartData?.vessel_part_public_key) {
+                return (
+                    <div key={idx} className="service-provider-card my-3 mx-3">
+                        <div className="box-container mt-4">
+                            <div className="main-box ml-3">
+                                <div className="subheading-text text-left px-5 mt-3">
+                                    {userData.map((user, u_idx) => {
+                                        if(user.author_key === service.author_key) {
+                                            return (
+                                                <div key={u_idx}>
+                                                    <p><span className="bold-text text-uppercase mr-2">
+                                                        Service Provider: </span> {user?.full_name}
+                                                    </p>
+                                                    <p><span className="bold-text text-uppercase mr-2">
+                                                        Provider License: </span> {user?.license_number}
+                                                    </p>
+                                                </div>
+                                            )
+                                        }
+                                        return null
+                                    })}
+                                    <p><span className="bold-text text-uppercase mr-2">
+                                        Description: </span> {service?.part_description}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="main-box ml-3">
+                                <div className="subheading-text text-left px-5 mt-3">
+                                    <p><span className="bold-text text-uppercase mr-2">
+                                        Date Purchased: </span> {service?.date_format}
+                                    </p>
+                                    <p><span className="bold-text text-uppercase mr-2">
+                                        Warranty Code: </span> {service?.warranty_code}
+                                    </p>
+                                    <p><span className="bold-text text-uppercase mr-2">
+                                        Created Date: </span> 
+                                        {service?.created_at}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+            return null;
+        })
+        return services;
+    }
+
+    const renderDeliveryRecords = () => {
+        const deliveries = deliveryData?.map((delivery, idx) => {
+            if(delivery.vessel_part_public_key_fkey === retrievedVesselPartData?.vessel_part_public_key) {
+                return (
+                    <div key={idx} className="delivery-service-card my-3 mx-3 pb-3">
+                        <div className="box-container mt-4">
+                            <div className="main-box ml-3">
+                                <div className="subheading-text text-left px-5 mt-3">
+                                    {userData.map((user, u_idx) => {
+                                        if(user.author_key === delivery.author_key) {
+                                            return (
+                                                <div key={u_idx}>
+                                                    <p><span className="bold-text text-uppercase mr-2">
+                                                        Delivery Service: </span> {user?.full_name}
+                                                    </p>
+                                                    <p><span className="bold-text text-uppercase mr-2">
+                                                        Delivery License: </span> {user?.license_number}
+                                                    </p>
+                                                </div>
+                                            )
+                                        }
+                                        return null
+                                    })}
+                                    <p><span className="bold-text text-uppercase mr-2">
+                                        Delivery Address: </span> {delivery?.delivered_address}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="main-box ml-3">
+                                <div className="subheading-text text-left px-5 mt-3">
+                                    <p><span className="bold-text text-uppercase mr-2">
+                                        Delivery Date: </span> {delivery?.date_format}
+                                    </p>
+                                    <p><span className="bold-text text-uppercase mr-2">
+                                        Warehouse: </span> {delivery?.warehouse}
+                                    </p>
+                                    <p><span className="bold-text text-uppercase mr-2">
+                                        Created Date: </span> 
+                                        {delivery?.created_at}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )
+            }
+            return null;
+        })
+        return deliveries;
+    }
+
     return (
         <div style={{overflowY: 'unset'}} className={`${(
-            inspectionModalOpen 
+            inspectionModalOpen || 
+            serviceModalOpen ||
+            deliveryModalOpen
             ) ? "record-container" : "supplychain-content py-3 px-5"}`
         }>
             {inspectionModalOpen && (
@@ -137,7 +263,25 @@ const SupplyChain = ({ wallet }) => {
                     vesselPartPubKey={retrievedVesselPartData?.vessel_part_public_key}
                     dataLoading={loaded => setInspectionDataLoaded(loaded)}
                     closeModal={setInspectionModalOpen}
-            />
+                />
+            )}
+            {serviceModalOpen && (
+                <ServiceRecordStoreModal 
+                    wallet={wallet}
+                    serviceProviderData={loginUserData}
+                    vesselPartPubKey={retrievedVesselPartData?.vessel_part_public_key}
+                    dataLoading={loaded => setServiceDataLoaded(loaded)}
+                    closeModal={setServiceModalOpen}
+                />
+            )}
+            {deliveryModalOpen && (
+                <DeliveryRecordStoreModal
+                    wallet={wallet}
+                    deliveryServiceData={loginUserData}
+                    vesselPartPubKey={retrievedVesselPartData?.vessel_part_public_key}
+                    dataLoading={loaded => setDeliveryDataLoaded(loaded)}
+                    closeModal={setDeliveryModalOpen}
+                />
             )}
             <div className="landing-text">
                Supply Chain 
@@ -193,21 +337,39 @@ const SupplyChain = ({ wallet }) => {
                 </div>
             </div>
 
-            <div className="card-black shadow-sm py-3 px-5 mt-4">
-                <div className="primary-text teal-color">
-                   Service Provider Vessel
+            <div className="card-black teal-color shadow-sm py-3 px-5 mt-4">
+                <div className="primary-text">
+                   Service Provider Record
                 </div>
                
-                {loginUserData?.designation === "internal_inspector" && (
+                {loginUserData?.designation === "service_provider" && (
                     <button 
-                    onClick={() => setInspectionModalOpen(true)} 
+                    onClick={() => setServiceModalOpen(true)} 
                     className="actium-maintenance-button ml-2 mt-3">
                         Add Vessel Part Details
                     </button>
                 )}
                 
                 <div className="content-height mt-3">
-                    content of validators
+                    {renderServiceRecords()}
+                </div>
+            </div>
+
+            <div className="card-black green-color shadow-sm py-3 px-5 mt-4">
+                <div className="primary-text">
+                   Delivery Service Record
+                </div>
+               
+                {loginUserData?.designation === "delivery_service" && (
+                    <button 
+                    onClick={() => setDeliveryModalOpen(true)} 
+                    className="actium-green-button ml-2 mt-3">
+                        Add Delivery Details
+                    </button>
+                )}
+                
+                <div className="content-height mt-3">
+                    {renderDeliveryRecords()}
                 </div>
             </div>
         </div>
