@@ -81,7 +81,7 @@ const HomePage = ({ wallet }) => {
                             {vesselData.map((vessel, idx) => {
                                 return (
                                     <tr key={idx}>
-                                        <th>{vessel.sliced_key}</th>
+                                        <th>{vessel.key_sliced}</th>
                                         <th>{vessel.vessel_name}</th>
                                         <th>40%</th>
                                         <th className="pt-0">

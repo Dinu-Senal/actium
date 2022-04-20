@@ -232,6 +232,29 @@ pub mod actium {
         deliveryservicerecord.vessel_part_public_key_fkey = vessel_part_public_key_fkey;
         Ok(())
     }
+    // seaworthiness record
+    pub fn store_seaworthiness_record(
+        ctx: Context<StoreSeaworthinessRecord>,
+        seaworthiness: String,
+        vessel_imo_fkey: String
+    ) -> ProgramResult {
+        let seaworthinessrecord: &mut Account<SeaworthinessRecord> = &mut ctx.accounts.seaworthinessrecord;
+        let author: &Signer = &mut ctx.accounts.author;
+        let clock: Clock = Clock::get().unwrap();
+
+        if seaworthiness.chars().count() > 3 {
+            return Err(ErrorConfig::SeaworthinessTooLong.into())
+        }
+        if vessel_imo_fkey.chars().count() > 20 {
+            return Err(ErrorConfig::SeaworthinessVesselIMOTooLong.into())
+        }
+
+        seaworthinessrecord.author = *author.key;
+        seaworthinessrecord.timestamp = clock.unix_timestamp;
+        seaworthinessrecord.seaworthiness = seaworthiness;
+        seaworthinessrecord.vessel_imo_fkey = vessel_imo_fkey;
+        Ok(())
+    }
 }
 
 /* ACCOUNTS */
@@ -313,6 +336,17 @@ pub struct StoreDeliveryServiceRecord<'info> {
     pub system_program: AccountInfo<'info >
 }
 
+// seaworthiness record
+#[derive(Accounts)]
+pub struct StoreSeaworthinessRecord<'info> {
+    #[account(init, payer = author, space = SeaworthinessRecord::LEN)]
+    pub seaworthinessrecord: Account<'info, SeaworthinessRecord>,
+    #[account(mut)]
+    pub author: Signer<'info>,
+    #[account(address = system_program::ID)]
+    pub system_program: AccountInfo<'info>
+}
+
 /* STRUCTURE OF ACCOUNTS */
 
 // structure of user
@@ -391,6 +425,15 @@ pub struct DeliveryServiceRecord {
     pub vessel_part_public_key_fkey: String
 }
 
+// structure of seaworthiness record account
+#[account]
+pub struct SeaworthinessRecord {
+    pub author: Pubkey,
+    pub timestamp: i64,
+    pub seaworthiness: String,
+    pub vessel_imo_fkey: String
+}
+
 /* SIZING OF ACCOUNTS */
 
 // configuring constant for sizing the account
@@ -432,6 +475,9 @@ const MAX_DELIVERED_ADDRESS_LENGTH: usize = 120 * 4; // store maximum 120 chars
 const MAX_DELIVERED_DATE_LENGTH: usize = 10 * 4; // store maximum 10 chars
 const MAX_WAREHOUSE_LENGTH: usize = 50 * 4; // store maximum 50 chars
 const MAX_D_VESSEL_PART_PUBLIC_KEY_FKEY_LENGTH: usize = 32 * 4; // store maximum 32 chars
+// seaworthiness record constants
+const MAX_SEAWORTHINESS_LENGTH: usize = 3 * 4; // store maximum 4 chars
+const MAX_S_VESSEL_IMO_FKEY_LENGTH: usize = 20 * 4; // store maximum 20 chars
 
 // configuring total size of the user account
 impl User {
@@ -502,6 +548,14 @@ impl DeliveryServiceRecord {
         + PREFIXED_STRING_LENGTH + MAX_WAREHOUSE_LENGTH // warehouse
         + PREFIXED_STRING_LENGTH + MAX_D_VESSEL_PART_PUBLIC_KEY_FKEY_LENGTH; // vessel part public key
 }
+// configure total size of the seaworthiness record account
+impl SeaworthinessRecord {
+    const LEN: usize = DISCRIMINATOR_LENGTH
+    + PUBLIC_KEY_LENGTH // author
+    + TIMESTAMP_LENGTH // timestamp
+    + PREFIXED_STRING_LENGTH + MAX_SEAWORTHINESS_LENGTH // seaworthiness
+    + PREFIXED_STRING_LENGTH + MAX_S_VESSEL_IMO_FKEY_LENGTH; // vessel imo
+}
 
 #[error]
 pub enum ErrorConfig {
@@ -566,4 +620,9 @@ pub enum ErrorConfig {
     WarehouseNameTooLong,
     #[msg("Only maximum of 32 characters can be provided for the vessel part public key")]
     DeliveryVesselPartKeyTooLong,
+    // seaworthiness record errors
+    #[msg("Only maximum of 3 characters can be provided for the seaworthiness")]
+    SeaworthinessTooLong,
+    #[msg("Only maximum of 20 characters can be provided for the vessel imo")]
+    SeaworthinessVesselIMOTooLong,
 }

@@ -5,6 +5,8 @@ import { getVessels } from '../apis/get-vessels';
 import { getUsers } from '../apis/get-users';
 import { getVesselParts } from '../apis/get-vessel-parts';
 import { getValidation } from '../apis/get-validations';
+import { getSeaworthiness } from '../apis/get-seaworthiness';
+import { storeSeaworthiness } from '../apis/store-seaworthiness';
 import MaintenancePartStoreModal from './record components/MaintenancePartStoreModal';
 import ValidationRecordStoreModal from './record components/ValidationRecordStoreModal';
 
@@ -15,6 +17,10 @@ const VesselPage = ({ wallet }) => {
     const [ userData, setUserData ] = useState([]);
     const [ vesselPartData, setVesselPartData ] = useState([]);
     const [ validationData, setValidationData ] = useState([]);
+    const [ seaworthinessData, setSeaworthinessData ] = useState([]);
+
+    const [ newSeaworthiness, setNewSeaworthiness ] = useState(0);
+    const [ approvedSeaworthiness, setApproveSeaworthiness ] = useState([]);
 
     const [ relevantVesselData, setReleventVesselData ] = useState({});
     const [ relevantUserData, setReleventUserData ] = useState({});
@@ -25,11 +31,11 @@ const VesselPage = ({ wallet }) => {
 
     const [ maintenancePartDataLoaded, setMaintenancePartDataLoaded ] = useState(false);
     const [ validationDataLoaded, setValidationDataLoaded ] = useState(false);
+    const [ seaworthinessDataLoaded, setSeaworthinessDataLoaded ] = useState(false);
 
 
     const [ maintenancePartModalOpen, setMaintenancePartModalOpen ] = useState(false);
     const [ validationModalOpen, setValidationModalOpen ] = useState(false);
-    const [ seaworthinessModalOpen, setSeaworthinessModalOpen ] = useState(false);
 
     const [ searchParams ] = useSearchParams();
 
@@ -52,6 +58,10 @@ const VesselPage = ({ wallet }) => {
         const validations = await getValidation(wallet);
         setValidationData(validations);
     }
+    const loadSeaworthiness = async () => {
+        const seaworthiness = await getSeaworthiness(wallet)
+        setSeaworthinessData(seaworthiness);
+    }
 
     useEffect(() => {
         loadVessel();
@@ -61,9 +71,10 @@ const VesselPage = ({ wallet }) => {
     useEffect(() => {
         loadVesselParts();
         loadValidations();
+        loadSeaworthiness();
         setMaintenancePartDataLoaded(false);
         setValidationDataLoaded(false);
-    }, [ wallet, maintenancePartDataLoaded, validationDataLoaded ] );
+    }, [ wallet, maintenancePartDataLoaded, validationDataLoaded, seaworthinessDataLoaded ] );
 
     useEffect(() => {
         const retrieveRelevantVesselData= () => {
@@ -95,7 +106,8 @@ const VesselPage = ({ wallet }) => {
 
     useEffect(() => {
         filterValidations();
-    }, [validationData])
+        filterSeaworthiness();
+    }, [validationData, seaworthinessData])
 
     const vesselDetails = () => {
         const vesselInfo = vesselData.map((vessel, idx) => {
@@ -333,16 +345,73 @@ const VesselPage = ({ wallet }) => {
         setFinalShipSuperintendentVal(finalShipSuperintendentValidation);
         setFinalPortStateControlVal(finalPortStateControlValidation);
         setFinalVettingOrganizationVal(finalVettingOrganizationApproval);
+
+        let shipSuperintendentSeaworthiness = 0;
+        let portStateSeaworthiness = 0;
+        let vettingSeaworthiness = 0;
+        if(finalShipSuperintendentValidation.length !== 0) {
+            if(finalShipSuperintendentValidation[0].v_approval === "Yes") {
+                shipSuperintendentSeaworthiness = 40;
+            } 
+        }
+
+        if(finalPortStateControlValidation.length !== 0) {
+            if(finalPortStateControlValidation[0].v_approval === "Yes") {
+                portStateSeaworthiness = 40;
+            } 
+        }
+
+        if(finalVettingOrganizationApproval.length !== 0) {
+            if(finalVettingOrganizationApproval[0].v_approval === "Yes") {
+                vettingSeaworthiness = 20;
+            } 
+        }
+        const newSeaworthiness = shipSuperintendentSeaworthiness + portStateSeaworthiness + vettingSeaworthiness
+    
+        setNewSeaworthiness(newSeaworthiness)
+    }
+
+    const filterSeaworthiness = () => {
+        const filteredSeawothinessData = seaworthinessData.filter(seaworth => {
+            if(seaworth.vessel_imo_fkey === relevantVesselData?.imo_number) {
+                return seaworth
+            } else {
+                return null;
+            }
+        });
+        
+        let approvedSeawothiness = [];
+        if(filteredSeawothinessData.length !== 0) {
+            const latestApprovedSeaworthiness = Math.max.apply(Math,  
+                filteredSeawothinessData.map(seaworth => {
+                return seaworth.timestamp
+            }));
+            approvedSeawothiness = filteredSeawothinessData.filter(seaworth => {
+                if(+seaworth.timestamp === latestApprovedSeaworthiness) {
+                    return seaworth
+                } else {
+                    return null
+                }
+            });
+        }
+        setApproveSeaworthiness(approvedSeawothiness)
     }
 
     const handleSeaworthiness = () => {
-        console.log(finalShipSuperintendentVal);
+        const injectRecordData = async() => {
+            const response = await storeSeaworthiness (
+                wallet,
+                newSeaworthiness.toString(),
+                relevantVesselData?.imo_number
+            );
+            setSeaworthinessDataLoaded(response);
+        }
+        injectRecordData();
     }
 
     return (
         <div style={{overflowY: 'unset'}} className={`${(
             maintenancePartModalOpen ||
-            seaworthinessModalOpen ||
             validationModalOpen
             ) ? "record-container" : "vessel-page-content py-3 px-5"}`
         }>
@@ -362,9 +431,6 @@ const VesselPage = ({ wallet }) => {
                     dataLoading={loaded => setValidationDataLoaded(loaded)}
                     closeModal={setValidationModalOpen}
                 />
-            )}
-            {seaworthinessModalOpen && (
-                <div>ccc</div>
             )}
             <div className="box-container mt-4">
                 {vesselDetails()}
@@ -458,11 +524,20 @@ const VesselPage = ({ wallet }) => {
                             Sea Worthiness
                         </div>
                         <div className="landing-text bold-text text-uppercase mt-5">
-                            100 <span className="teal-color">%</span>
+                            {(approvedSeaworthiness.length !== 0) ? 
+                                <div>
+                                    {approvedSeaworthiness[0].seaworthiness} <span className="teal-color">%</span>
+                                </div>
+                                :
+                                <div className="error-text">0</div>
+                            }
+                            
                         </div>
                         <div className="my-5">
-                            Latest Updated Date: 
+                            <div>Latest Approved Date: </div>
+                            <div>New Seaworthiness: <span className="ml-1">{newSeaworthiness}</span> %</div>
                         </div>
+
                         <div className="inline-row mt-4 mb-3">
                             {(relevantUserData?.user_designation === "maintenance_admin"  && 
                                 relevantUserData?.user_author === relevantVesselData?.author) ? (

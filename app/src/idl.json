@@ -263,6 +263,36 @@
           "type": "string"
         }
       ]
+    },
+    {
+      "name": "storeSeaworthinessRecord",
+      "accounts": [
+        {
+          "name": "seaworthinessrecord",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "author",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "seaworthiness",
+          "type": "string"
+        },
+        {
+          "name": "vesselImoFkey",
+          "type": "string"
+        }
+      ]
     }
   ],
   "accounts": [
@@ -485,6 +515,30 @@
           }
         ]
       }
+    },
+    {
+      "name": "SeaworthinessRecord",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "author",
+            "type": "publicKey"
+          },
+          {
+            "name": "timestamp",
+            "type": "i64"
+          },
+          {
+            "name": "seaworthiness",
+            "type": "string"
+          },
+          {
+            "name": "vesselImoFkey",
+            "type": "string"
+          }
+        ]
+      }
     }
   ],
   "errors": [
@@ -622,6 +676,16 @@
       "code": 6026,
       "name": "DeliveryVesselPartKeyTooLong",
       "msg": "Only maximum of 32 characters can be provided for the vessel part public key"
+    },
+    {
+      "code": 6027,
+      "name": "SeaworthinessTooLong",
+      "msg": "Only maximum of 3 characters can be provided for the seaworthiness"
+    },
+    {
+      "code": 6028,
+      "name": "SeaworthinessVesselIMOTooLong",
+      "msg": "Only maximum of 20 characters can be provided for the vessel imo"
     }
   ],
   "metadata": {

@@ -15,13 +15,13 @@ export class Validating {
         return this.publicKey.toBase58()
     }
 
-    get author_key() {
-        return this.author.toBase58()
-    }
-    
-    get sliced_key() {
+    get key_sliced() {
         const key = this.publicKey.toBase58()
         return key.slice(0,4) + '..' + key.slice(-4)
+    }
+
+    get author_key() {
+        return this.author.toBase58()
     }
 
     get author_display() {

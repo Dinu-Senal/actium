@@ -16,17 +16,12 @@ export class Vessel {
     }
     
     get key_sliced() {
-        const publickey = this.publicKey.toBase58()
-        return publickey.slice(0,4) + '..' + publickey.slice(-4)
+        const key = this.publicKey.toBase58()
+        return key.slice(0,4) + '..' + key.slice(-4)
     }
 
     get author_key() {
         return this.author.toBase58()
-    }
-    
-    get sliced_key() {
-        const key = this.publicKey.toBase58()
-        return key.slice(0,4) + '..' + key.slice(-4)
     }
 
     get author_display() {

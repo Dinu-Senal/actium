@@ -1,19 +1,18 @@
 import dayjs from 'dayjs';
 
-export class Inspection {
+export class Seaworthiness {
     constructor (publicKey, accountData) {
         this.publicKey = publicKey
         this.author = accountData.author
         this.timestamp = accountData.timestamp.toString()
-        this.i_comment = accountData.iComment
-        this.maintenance_batch = accountData.maintenanceBatch
-        this.vessel_part_public_key_fkey = accountData.vesselPartPublicKeyFkey
+        this.seaworthiness = accountData.seaworthiness
+        this.vessel_imo_fkey = accountData.vesselImoFkey
     }
 
     get key() {
         return this.publicKey.toBase58()
     }
-    
+
     get key_sliced() {
         const key = this.publicKey.toBase58()
         return key.slice(0,4) + '..' + key.slice(-4)
@@ -29,12 +28,6 @@ export class Inspection {
     }
 
     get created_at() {
-        return dayjs.unix(this.timestamp).format('DD/MM/YYYY')
-    }
-
-    get created_ago() {
-        var relativeTime = require('dayjs/plugin/relativeTime')
-        dayjs.extend(relativeTime)
-        return dayjs.unix(this.timestamp).fromNow()
+        return dayjs.unix(this.timestamp).format('DD - MMMM - YYYY')
     }
 }
