@@ -4,10 +4,11 @@ import { workspace } from '../constants';
 
 const { SystemProgram, Keypair } = web3;
 
-export const storeValidatorRecord = async (
+export const storeValidation = async (
     wallet,
     v_approval, 
     v_comment, 
+    v_designation,
     vessel_imo_fkey
 ) => {
     const validatorrecord = Keypair.generate();
@@ -18,6 +19,7 @@ export const storeValidatorRecord = async (
         await program.rpc.storeValidatorRecord(
             v_approval, 
             v_comment, 
+            v_designation,
             vessel_imo_fkey,
           {
             accounts: {

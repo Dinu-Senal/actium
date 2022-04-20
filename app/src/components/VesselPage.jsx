@@ -4,7 +4,9 @@ import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { getVessels } from '../apis/get-vessels';
 import { getUsers } from '../apis/get-users';
 import { getVesselParts } from '../apis/get-vessel-parts';
+import { getValidation } from '../apis/get-validations';
 import MaintenancePartStoreModal from './record components/MaintenancePartStoreModal';
+import ValidationRecordStoreModal from './record components/ValidationRecordStoreModal';
 
 const VesselPage = ({ wallet }) => {
     const navigate = useNavigate();
@@ -12,13 +14,21 @@ const VesselPage = ({ wallet }) => {
     const [ vesselData, setVesselData ] = useState([]);
     const [ userData, setUserData ] = useState([]);
     const [ vesselPartData, setVesselPartData ] = useState([]);
+    const [ validationData, setValidationData ] = useState([]);
 
     const [ relevantVesselData, setReleventVesselData ] = useState({});
     const [ relevantUserData, setReleventUserData ] = useState({});
 
+    const [ finalShipSuperintendentVal, setFinalShipSuperintendentVal ] = useState([]);
+    const [ finalPortStateControlVal, setFinalPortStateControlVal ] = useState([]);
+    const [ finalVettingOrganizationVal, setFinalVettingOrganizationVal ] = useState([]);
+
     const [ maintenancePartDataLoaded, setMaintenancePartDataLoaded ] = useState(false);
+    const [ validationDataLoaded, setValidationDataLoaded ] = useState(false);
+
+
     const [ maintenancePartModalOpen, setMaintenancePartModalOpen ] = useState(false);
-    
+    const [ validationModalOpen, setValidationModalOpen ] = useState(false);
     const [ seaworthinessModalOpen, setSeaworthinessModalOpen ] = useState(false);
 
     const [ searchParams ] = useSearchParams();
@@ -38,6 +48,10 @@ const VesselPage = ({ wallet }) => {
         const vesselsParts = await getVesselParts(wallet);
         setVesselPartData(vesselsParts);
     }
+    const loadValidations = async () => {
+        const validations = await getValidation(wallet);
+        setValidationData(validations);
+    }
 
     useEffect(() => {
         loadVessel();
@@ -46,8 +60,10 @@ const VesselPage = ({ wallet }) => {
 
     useEffect(() => {
         loadVesselParts();
+        loadValidations();
         setMaintenancePartDataLoaded(false);
-    }, [wallet, maintenancePartDataLoaded]);
+        setValidationDataLoaded(false);
+    }, [ wallet, maintenancePartDataLoaded, validationDataLoaded ] );
 
     useEffect(() => {
         const retrieveRelevantVesselData= () => {
@@ -65,6 +81,8 @@ const VesselPage = ({ wallet }) => {
                 if(userKey === user.key) {
                     setReleventUserData({
                         user_author: user.author_key, 
+                        name: user.full_name, 
+                        license_number: user.license_number,
                         user_designation: user.designation,
                         user_public_key: user.key,
                     })
@@ -73,7 +91,11 @@ const VesselPage = ({ wallet }) => {
         }
         retrieveRelevantVesselData();
         retrieveRelevantUserData();
-    }, [vesselData, userData])
+    }, [ vesselData, userData ] );
+
+    useEffect(() => {
+        filterValidations();
+    }, [validationData])
 
     const vesselDetails = () => {
         const vesselInfo = vesselData.map((vessel, idx) => {
@@ -148,7 +170,7 @@ const VesselPage = ({ wallet }) => {
                 <div className="scrollable-table">
                     <table className="table maintenance-table" style={{border: "none"}}>
                         <thead>
-                            <tr>
+                            <tr className="burn-orange-color">
                                 <th className="maintenance-table-heading" scope="col">Maintenance Part</th>
                                 <th className="maintenance-table-heading" scope="col">Serial Key</th>
                                 <th className="maintenance-table-heading" scope="col">Created</th>
@@ -168,7 +190,7 @@ const VesselPage = ({ wallet }) => {
                                             <th className="pt-0">
                                                 <button 
                                                     onClick={() => navigate(`/supplychain?user_key=${userKey}&serial_key=${vesselPart.vessel_part_serial_key}&imo_number=${vesselPart.vessel_imo_fkey}`)}
-                                                    className="actium-maintenance-button ml-2 mt-3" 
+                                                    className="actium-orange-button ml-2 mt-3" 
                                                 >
                                                     View Supply Chain
                                                 </button>
@@ -184,20 +206,162 @@ const VesselPage = ({ wallet }) => {
             )
         }
     }
+
+    const renderValidationData = () => {
+        if(validationData.length !== 0) {
+            return (
+                <div className="scrollable-table">
+                    <table className="table maintenance-table" style={{border: "none"}}>
+                        <thead>
+                            <tr className="teal-color">
+                                <th className="maintenance-table-heading" scope="col">Validator Name</th>
+                                <th className="maintenance-table-heading" scope="col">Validator License Number</th>
+                                <th className="maintenance-table-heading" scope="col">Validator Designation</th>
+                                <th className="maintenance-table-heading" scope="col">Approval</th>
+                                <th className="maintenance-table-heading" scope="col">Comment</th>
+                                <th className="maintenance-table-heading" scope="col">Issued</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {validationData.map((validation, idx) => {
+                                if(validation.vessel_imo_fkey === relevantVesselData?.imo_number) {
+                                    return (
+                                        <tr key={idx}>
+                                            {userData.map((user, u_idx) => {
+                                                if(user.author_key === validation.author_key) {
+                                                    return (
+                                                        <> 
+                                                            <th>{user?.full_name}</th>
+                                                            <th>{user?.license_number}</th>
+                                                            {(user?.designation === "ship_superintendent") ? <th>Ship Superintendent</th>
+                                                            : (user?.designation === "port_state_control") ? <th>Port State Control</th>
+                                                            : <th>Vetting Organization</th>
+                                                            }
+                                                            
+                                                        </>
+                                                    )
+                                                }
+                                                return null
+                                            })}
+                                            <th>{validation.v_approval}</th>
+                                            <th>{validation.v_comment}</th>
+                                            <th>{validation.created_at}</th>
+                                        </tr>
+                                    )
+                                }
+                                return null
+                            })}
+                        </tbody>
+                    </table>
+                </div>
+            )
+        }
+    }
     
+    const filterValidations = () => {
+        const filteredValidationData = validationData.filter(validation => {
+            if(validation.vessel_imo_fkey === relevantVesselData?.imo_number) {
+                return validation
+            } else {
+                return null;
+            }
+        });
+        const shipSuperintendentValidations = filteredValidationData.filter(validation => {
+            if(validation.v_designation === "ship_superintendent") {
+                return validation
+            } else {
+                return null;
+            }
+        });
+        const portStateControlValidations = filteredValidationData.filter(validation => {
+            if(validation.v_designation === "port_state_control") {
+                return validation
+            } else {
+                return null;
+            }
+        });
+        const vettingOrganizationValidations = filteredValidationData.filter(validation => {
+            if(validation.v_designation === "vetting_organization") {
+                return validation
+            } else {
+                return null;
+            }
+        });
+
+        let finalShipSuperintendentValidation = [];
+        let finalPortStateControlValidation = [];
+        let finalVettingOrganizationApproval = [];
+        if(shipSuperintendentValidations.length !== 0) {
+            const shipSuperIntendentLatestApproval = Math.max.apply(Math,  
+                shipSuperintendentValidations.map(validation => {
+                return validation.timestamp
+            }));
+            finalShipSuperintendentValidation = shipSuperintendentValidations.filter(validation => {
+                if(+validation.timestamp === shipSuperIntendentLatestApproval) {
+                    return validation
+                } else {
+                    return null
+                }
+            });
+        }
+        if(portStateControlValidations.length !== 0) {
+            const portStateControlLatestApproval = Math.max.apply(Math,  
+                portStateControlValidations.map(validation => {
+                return validation.timestamp
+            }));
+            finalPortStateControlValidation = portStateControlValidations.filter(validation => {
+                if(+validation.timestamp === portStateControlLatestApproval) {
+                    return validation
+                } else {
+                    return null
+                }
+            });
+        }
+        if(vettingOrganizationValidations.length !== 0) {
+            const vettingOrganizationLatestApproval = Math.max.apply(Math,  
+                vettingOrganizationValidations.map(validation => {
+                return validation.timestamp
+            }));
+            finalVettingOrganizationApproval = portStateControlValidations.filter(validation => {
+                if(+validation.timestamp === vettingOrganizationLatestApproval) {
+                    return validation
+                } else {
+                    return null
+                }
+            });
+        }
+        setFinalShipSuperintendentVal(finalShipSuperintendentValidation);
+        setFinalPortStateControlVal(finalPortStateControlValidation);
+        setFinalVettingOrganizationVal(finalVettingOrganizationApproval);
+    }
+
+    const handleSeaworthiness = () => {
+        console.log(finalShipSuperintendentVal);
+    }
+
     return (
         <div style={{overflowY: 'unset'}} className={`${(
             maintenancePartModalOpen ||
-            seaworthinessModalOpen 
+            seaworthinessModalOpen ||
+            validationModalOpen
             ) ? "record-container" : "vessel-page-content py-3 px-5"}`
         }>
             {maintenancePartModalOpen && (
                 <MaintenancePartStoreModal 
                     wallet={wallet}
-                    dataLoading={loaded => setMaintenancePartDataLoaded(loaded)}
                     vesselIMO={relevantVesselData?.imo_number}
+                    dataLoading={loaded => setMaintenancePartDataLoaded(loaded)}
                     closeModal={setMaintenancePartModalOpen}
             />
+            )}
+            {validationModalOpen && (
+                <ValidationRecordStoreModal
+                    wallet={wallet}
+                    validatorData={relevantUserData}
+                    vesselIMO={relevantVesselData?.imo_number}
+                    dataLoading={loaded => setValidationDataLoaded(loaded)}
+                    closeModal={setValidationModalOpen}
+                />
             )}
             {seaworthinessModalOpen && (
                 <div>ccc</div>
@@ -206,6 +370,121 @@ const VesselPage = ({ wallet }) => {
                 {vesselDetails()}
                 {userDetails()}
             </div>
+            <div className="card-white shadow-sm p-3 mt-4">
+                <div className="primary-text">
+                        Vessel Integrity
+                </div>
+                <div className="inline-row mt-3">
+                    <button 
+                        className="actium-main-button ml-2" 
+                        onClick={() => navigate(-1)}
+                    >
+                        Back
+                    </button>
+                    
+                    {(relevantUserData?.user_designation === "ship_superintendent" || 
+                        relevantUserData?.user_designation === "port_state_control" ||
+                        relevantUserData?.user_designation === "vetting_organization") && (
+                            <button 
+                                className="actium-main-button ml-2" 
+                                onClick={() => setValidationModalOpen(true)}>
+                                    Add Validation
+                            </button>
+                    )}
+
+                    <div className="ml-2">
+                        <WalletMultiButton />
+                    </div>
+                </div>
+                <div className="box-container mt-4">
+                    <div className="main-box maintenance-record-card mx-2 p-2">
+                        <div className="subheading-text teal-color my-3">
+                            <p className="text-uppercase bold-text mt-2 mb-0 mx-0">Ship Superintendent
+                            {(finalShipSuperintendentVal.length !== 0) && 
+                                <span className="color-white mx-3">-
+                                    <span className="color-white mx-3"> 
+                                        {finalShipSuperintendentVal[0].v_approval}
+                                    </span>
+                                </span>
+                            }</p>
+                            {(finalShipSuperintendentVal.length !== 0) ? 
+                                <div className="color-white mt-2">
+                                    <div>Comment: {finalShipSuperintendentVal[0].v_comment}</div>
+                                    <div>Issued: {finalShipSuperintendentVal[0].created_at}</div>
+                                </div>
+                                :
+                                <div className="color-white my-2">Not Initialized</div>
+                            }
+                        </div>
+                        <div className="subheading-text teal-color my-3">
+                            <p className="text-uppercase bold-text mt-2 mb-0 mx-0">Port State Control
+                            {(finalPortStateControlVal.length !== 0) && 
+                                <span className="color-white mx-3">-
+                                    <span className="color-white mx-3"> 
+                                        {finalPortStateControlVal[0].v_approval}
+                                    </span>
+                                </span>
+                            }</p>
+                            {(finalPortStateControlVal.length !== 0) ? 
+                                <div className="color-white mt-2">
+                                    <div>Comment: {finalPortStateControlVal[0].v_comment}</div>
+                                    <div>Issued: {finalPortStateControlVal[0].created_at}</div>
+                                </div>
+                                :
+                                <div className="color-white my-2">Not Initialized</div>
+                            }
+                        </div>
+                        <div className="subheading-text teal-color my-3">
+                            <p className="text-uppercase bold-text mt-2 mb-0 mx-0">Vetting Organization
+                            {(finalVettingOrganizationVal.length !== 0) && 
+                                <span className="color-white mx-3">-
+                                    <span className="color-white mx-3"> 
+                                        {finalVettingOrganizationVal[0].v_approval}
+                                    </span>
+                                </span>
+                            }</p>
+                            {(finalVettingOrganizationVal.length !== 0) ? 
+                                <div className="color-white mt-2">
+                                    <div>Comment: {finalVettingOrganizationVal[0].v_comment}</div>
+                                    <div>Issued: {finalVettingOrganizationVal[0].created_at}</div>
+                                </div>
+                                :
+                                <div className="color-white my-2">Not Initialized</div>
+                            }
+                        </div>
+                    </div>
+                    <div className="main-box maintenance-record-card mx-2 p-2">
+                        <div className="subheading-text bold-text text-uppercase teal-color my-3 p">
+                            Sea Worthiness
+                        </div>
+                        <div className="landing-text bold-text text-uppercase mt-5">
+                            100 <span className="teal-color">%</span>
+                        </div>
+                        <div className="my-5">
+                            Latest Updated Date: 
+                        </div>
+                        <div className="inline-row mt-4 mb-3">
+                            {(relevantUserData?.user_designation === "maintenance_admin"  && 
+                                relevantUserData?.user_author === relevantVesselData?.author) ? (
+                                <button 
+                                    onClick={handleSeaworthiness} 
+                                    className="actium-maintenance-button ml-2"
+                                >
+                                    Approve
+                                </button>
+                            ) : 
+                                <div className="error-msg-sm-bdr ml-2">
+                                    Restricted
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+                <div className="mt-4">
+                    {renderValidationData()}
+                </div>
+            </div>
+
             <div className="card-white shadow-sm p-3 mt-4">
                 <div className="primary-text">
                         Maintenance Record
@@ -231,52 +510,9 @@ const VesselPage = ({ wallet }) => {
                         <WalletMultiButton />
                     </div>
                 </div>
-                <div className="box-container mt-4">
-                    <div className="main-box maintenance-record-card mx-2 p-2">
-                        <div className="subheading-text bold-text text-uppercase teal-color mt-2">
-                            Ship Superintendent
-                        </div>
-                        <div className="subheading-text bold-text text-uppercase teal-color mt-2">
-                            Port State Control
-                        </div>
-                        <div className="subheading-text bold-text text-uppercase teal-color mt-2">
-                            Vetting Organization
-                        </div>
-                        <div className="inline-row mt-3">
-                            {(relevantUserData?.user_designation === "ship_superintendent"
-                            || relevantUserData?.user_designation === "port_state_control"
-                            || relevantUserData?.user_designation === "vetting_organization"
-                            ) ? (
-                                <button 
-                                    onClick={() => setSeaworthinessModalOpen(true)} 
-                                    className="actium-maintenance-button ml-2"
-                                >
-                                    Approve
-                                </button>
-                            ) : 
-                                <div className="error-msg-sm-bdr ml-2">
-                                    Restricted
-                                </div>
-                            }
-                        </div>
-                        <button className="actium-maintenance-button ml-2">
-                            View All
-                        </button>
-                    </div>
-                    <div className="main-box maintenance-record-card mx-2 p-2">
-                        <div className="subheading-text bold-text text-uppercase teal-color">
-                            Sea Worthiness
-                        </div>
-                        <div className="landing-text bold-text text-uppercase mt-4">
-                            100 <span className="teal-color">%</span>
-                        </div>
-                    </div>
-                </div>
-                <div className="mt-3">
+                <div className="mt-4">
                     {renderMaintenanceData()}
                 </div>
-               
-                
             </div>
         </div>
     );

@@ -145,6 +145,10 @@
           "type": "string"
         },
         {
+          "name": "vDesignation",
+          "type": "string"
+        },
+        {
           "name": "vesselImoFkey",
           "type": "string"
         }
@@ -380,6 +384,10 @@
             "type": "string"
           },
           {
+            "name": "vDesignation",
+            "type": "string"
+          },
+          {
             "name": "vesselImoFkey",
             "type": "string"
           }
@@ -552,61 +560,66 @@
     },
     {
       "code": 6014,
+      "name": "ValidatorDesignationTooLong",
+      "msg": "Only maximum of 20 characters can be provided for the validator's designation"
+    },
+    {
+      "code": 6015,
       "name": "ValidatorIMONumberTooLong",
       "msg": "Only maximum of 20 characters can be provided for the validator's vessel imo"
     },
     {
-      "code": 6015,
+      "code": 6016,
       "name": "PartDescriptionTooLong",
       "msg": "Only maximum of 200 characters can be provided for the part description"
     },
     {
-      "code": 6016,
+      "code": 6017,
       "name": "PurchasedDateTooLong",
       "msg": "Only maximum of 10 characters can be provided for the purchased data"
     },
     {
-      "code": 6017,
+      "code": 6018,
       "name": "WarrantyCodeTooLong",
       "msg": "Only maximum of 20 characters can be provided for the warranty code"
     },
     {
-      "code": 6018,
+      "code": 6019,
       "name": "PartForeignKeyTooLong",
       "msg": "Only maximum of 32 characters can be provided for the part id"
     },
     {
-      "code": 6019,
+      "code": 6020,
       "name": "InspectorCommentTooLong",
       "msg": "Only maximum of 300 characters can be provided for the inspector's comment"
     },
     {
-      "code": 6020,
+      "code": 6021,
       "name": "InspectorMaintenanceBatchTooLong",
       "msg": "Only maximum of 50 characters can be provided for the maintenance batch"
     },
     {
-      "code": 6021,
+      "code": 6022,
       "name": "InspectorVesselPartPublicKeyTooLong",
       "msg": "Only maximum of 32 characters can be provided for the vessel part public key"
     },
     {
-      "code": 6022,
+      "code": 6023,
       "name": "DeliveredAddressTooLong",
       "msg": "Only maximum of 120 characters can be provided for the delivered address"
     },
     {
-      "code": 6023,
+      "code": 6024,
       "name": "DeliveredDateTooLong",
       "msg": "Only maximum of 10 characters can be provided for the delivered date"
     },
     {
-      "code": 6024,
+      "code": 6025,
       "name": "WarehouseNameTooLong",
       "msg": "Only maximum of 50 characters can be provided for the warehouse"
     },
     {
-      "code": 6025,
+      "code": 6026,
       "name": "DeliveryVesselPartKeyTooLong",
       "msg": "Only maximum of 32 characters can be provided for the vessel part public key"
     }

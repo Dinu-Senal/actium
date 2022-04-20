@@ -86,14 +86,9 @@ const HomePage = ({ wallet }) => {
                                         <th>40%</th>
                                         <th className="pt-0">
                                             <button 
-                                                className="actium-secondary-button ml-2" 
+                                                className="actium-secondary-button ml-2 mt-3" 
                                                 onClick={() => navigate(`/vessel?vessel_key=${vessel.key}&user_key=${userKey}`)}>
                                                 View Details
-                                            </button>
-                                            <button 
-                                                className="actium-secondary-button ml-2 mt-3" 
-                                                onClick={() => setIsModalOpen(true)}>
-                                                Validate
                                             </button>
                                         </th>
                                     </tr>

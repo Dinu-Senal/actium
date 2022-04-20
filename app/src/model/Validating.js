@@ -7,6 +7,7 @@ export class Validating {
         this.timestamp = accountData.timestamp.toString()
         this.v_approval = accountData.vApproval
         this.v_comment = accountData.vComment
+        this.v_designation = accountData.vDesignation
         this.vessel_imo_fkey = accountData.vesselImoFkey
     }
 
@@ -29,7 +30,7 @@ export class Validating {
     }
 
     get created_at() {
-        return dayjs.unix(this.timestamp).format('DD/MM/YYYY')
+        return dayjs.unix(this.timestamp).format('DD - MMMM - YYYY')
     }
 
     get created_ago() {

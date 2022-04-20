@@ -110,6 +110,7 @@ pub mod actium {
         ctx: Context<StoreValidatorRecord>,
         v_approval: String,
         v_comment: String,
+        v_designation: String,
         vessel_imo_fkey: String
     ) -> ProgramResult {
         let validatorrecord: &mut Account<ValidatorRecord> = &mut ctx.accounts.validatorrecord;
@@ -122,6 +123,9 @@ pub mod actium {
         if v_comment.chars().count() > 300 {
             return Err(ErrorConfig::ValidatorCommentTooLong.into())
         }
+        if v_designation.chars().count() > 20 {
+            return Err(ErrorConfig::ValidatorDesignationTooLong.into())
+        }
         if vessel_imo_fkey.chars().count() > 20 {
             return Err(ErrorConfig::ValidatorIMONumberTooLong.into())
         }
@@ -130,6 +134,7 @@ pub mod actium {
         validatorrecord.timestamp = clock.unix_timestamp;
         validatorrecord.v_approval = v_approval;
         validatorrecord.v_comment = v_comment;
+        validatorrecord.v_designation = v_designation;
         validatorrecord.vessel_imo_fkey = vessel_imo_fkey;
         Ok(())
     }
@@ -350,6 +355,7 @@ pub struct ValidatorRecord {
     pub timestamp: i64,
     pub v_approval: String,
     pub v_comment: String,
+    pub v_designation: String,
     pub vessel_imo_fkey: String
 }
 
@@ -410,6 +416,7 @@ const MAX_VESSEL_IMO_FKEY_LENGTH: usize = 20 * 4; // stores maximum 20 chars
 // validator record constants
 const MAX_VALIDATED_LENGTH: usize = 3 * 4; // stores maximum 3 chars
 const MAX_VCOMMENT_LENGTH: usize = 300 * 4; // stores maximum 300 chars
+const MAX_V_DESIGNATION_LENGTH: usize = 20 * 4; // stores maximum 20 chars
 const MAX_V_VESSEL_IMO_FKEY_LENGTH: usize = 20 * 4; // stores maximum 20 chars
 // service provider record constants
 const MAX_PART_DESCRIPTION_LENGTH: usize = 200 * 4; // store maximum 200 chars
@@ -463,6 +470,7 @@ impl ValidatorRecord {
         + TIMESTAMP_LENGTH // timestamp
         + PREFIXED_STRING_LENGTH + MAX_VALIDATED_LENGTH // validated
         + PREFIXED_STRING_LENGTH + MAX_VCOMMENT_LENGTH // validator's comment
+        + PREFIXED_STRING_LENGTH + MAX_V_DESIGNATION_LENGTH // validator's designation
         + PREFIXED_STRING_LENGTH + MAX_V_VESSEL_IMO_FKEY_LENGTH; // validator's vessel imo
 }
 // configuring total size of the service provider record account
@@ -529,6 +537,8 @@ pub enum ErrorConfig {
     ValidatorStatusTooLong,
     #[msg("Only maximum of 300 characters can be provided for the validator's comment")]
     ValidatorCommentTooLong,
+    #[msg("Only maximum of 20 characters can be provided for the validator's designation")]
+    ValidatorDesignationTooLong,
     #[msg("Only maximum of 20 characters can be provided for the validator's vessel imo")]
     ValidatorIMONumberTooLong,
     // service provider record errors

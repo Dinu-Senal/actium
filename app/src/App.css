@@ -158,6 +158,9 @@ a:hover {
 .bold-text {
   font-weight: 500;
 }
+.color-white {
+  color: #FFFFFF;
+}
 .color-wheat {
   color: #F5DEB3;
 }
@@ -242,6 +245,19 @@ a:hover {
 }
 .actium-green-button:hover {
   background: #B2D430;
+  transition-duration: 0.6s;
+}
+.actium-orange-button {
+  cursor: pointer !important;
+  background: #F5F5F5;
+  border: none;
+  text-transform: uppercase;
+  color: #000;
+  border-radius: 25px;
+  padding: 5px 15px 5px 15px;
+}
+.actium-orange-button:hover {
+  background: #FF4C29;
   transition-duration: 0.6s;
 }
 .actium-maintenance-button {
