@@ -334,7 +334,7 @@ const VesselPage = ({ wallet }) => {
                 vettingOrganizationValidations.map(validation => {
                 return validation.timestamp
             }));
-            finalVettingOrganizationApproval = portStateControlValidations.filter(validation => {
+            finalVettingOrganizationApproval = vettingOrganizationValidations.filter(validation => {
                 if(+validation.timestamp === vettingOrganizationLatestApproval) {
                     return validation
                 } else {
@@ -368,7 +368,7 @@ const VesselPage = ({ wallet }) => {
         }
         const newSeaworthiness = shipSuperintendentSeaworthiness + portStateSeaworthiness + vettingSeaworthiness
     
-        setNewSeaworthiness(newSeaworthiness)
+        setNewSeaworthiness(newSeaworthiness);
     }
 
     const filterSeaworthiness = () => {
@@ -531,10 +531,12 @@ const VesselPage = ({ wallet }) => {
                                 :
                                 <div className="error-text">0</div>
                             }
-                            
                         </div>
                         <div className="my-5">
-                            <div>Latest Approved Date: </div>
+                                <div><span className="mr-1">Latest Approved Date: </span>
+                                    {(approvedSeaworthiness.length !== 0) ? 
+                                    approvedSeaworthiness[0].created_at : "Not Approved"}
+                                </div>
                             <div>New Seaworthiness: <span className="ml-1">{newSeaworthiness}</span> %</div>
                         </div>
 

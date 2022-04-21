@@ -71,6 +71,7 @@ const HomePage = ({ wallet }) => {
                     <table className="table" style={{border: "none"}}>
                         <thead>
                             <tr>
+                                <th className="table-heading" scope="col">No.</th>
                                 <th className="table-heading" scope="col">Public Key</th>
                                 <th className="table-heading" scope="col">Vessel Name</th>
                                 <th className="table-heading" scope="col">Seaworthiness</th>
@@ -81,6 +82,7 @@ const HomePage = ({ wallet }) => {
                             {vesselData.map((vessel, idx) => {
                                 return (
                                     <tr key={idx}>
+                                        <th>{idx+1}</th>
                                         <th>{vessel.key_sliced}</th>
                                         <th>{vessel.vessel_name}</th>
                                         <th>40%</th>
