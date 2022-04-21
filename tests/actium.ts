@@ -17,7 +17,7 @@ describe('actium', () => {
     const user = anchor.web3.Keypair.generate();
     await program.rpc.storeUser(
       'Dinu Senal Sendanayake',
-      'Company Admin',
+      'maintenance_admin',
       '800900',
       '990230420V',
       '+94 71 6264322',
@@ -36,41 +36,10 @@ describe('actium', () => {
     // making sure user account have valid data
     assert.equal(userAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
     assert.equal(userAccount.fullName, 'Dinu Senal Sendanayake');
-    assert.equal(userAccount.designation, 'Company Admin');
+    assert.equal(userAccount.designation, 'maintenance_admin');
     assert.equal(userAccount.licenseNumber, '800900');
     assert.equal(userAccount.nicNumber, '990230420V');
     assert.equal(userAccount.contact, '+94 71 6264322');
-    assert.ok(userAccount.timestamp);
-  });
-
-  it('can store a new user without contact', async () => {
-    // 'storeUser' instruction execution
-    const user = anchor.web3.Keypair.generate();
-    await program.rpc.storeUser(
-      'Sachin Umayangana',
-      'Ship Superintendant',
-      '739124',
-      '800340750V',
-      '',
-      {
-        accounts: {
-          user: user.publicKey,
-          author: program.provider.wallet.publicKey,
-          systemProgram: anchor.web3.SystemProgram.programId
-        },
-        signers: [user]
-      }
-    );
-    // fetching user details of the created user
-    const userAccount = await program.account.user.fetch(user.publicKey);
-
-    // making sure userAccount has valid data
-    assert.equal(userAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
-    assert.equal(userAccount.fullName, 'Sachin Umayangana');
-    assert.equal(userAccount.designation, 'Ship Superintendant');
-    assert.equal(userAccount.licenseNumber, '739124');
-    assert.equal(userAccount.nicNumber, '800340750V');
-    assert.equal(userAccount.contact, '');
     assert.ok(userAccount.timestamp);
   });
 
@@ -84,7 +53,7 @@ describe('actium', () => {
     const user = anchor.web3.Keypair.generate();
     await program.rpc.storeUser(
       'Manul Thisuraka',
-      'Internal Inspector',
+      'internal_inspector',
       '430201',
       '834322012V',
       '+74 21 0023341',
@@ -103,7 +72,7 @@ describe('actium', () => {
     // making sure userAccount has valid data
     assert.equal(userAccount.author.toBase58(), newUser.publicKey.toBase58());
     assert.equal(userAccount.fullName, 'Manul Thisuraka');
-    assert.equal(userAccount.designation, 'Internal Inspector');
+    assert.equal(userAccount.designation, 'internal_inspector');
     assert.equal(userAccount.licenseNumber, '430201');
     assert.equal(userAccount.nicNumber, '834322012V');
     assert.equal(userAccount.contact, '+74 21 0023341');
@@ -118,7 +87,7 @@ describe('actium', () => {
     try {
       await program.rpc.storeUser(
         userNameWith51Chars,
-        'Service Provider',
+        'service_provider',
         '723054',
         '012340120V',
         '+44 02 434012330',
@@ -140,7 +109,7 @@ describe('actium', () => {
 
   it('can get all the users', async () => {
     const userAccounts = await program.account.user.all();
-    assert.equal(userAccounts.length, 3);
+    assert.equal(userAccounts.length, 2);
   });
 
   it('can retrieve user account by author', async () => {
@@ -154,7 +123,7 @@ describe('actium', () => {
       }
     ]);
 
-    assert.equal(userAccounts.length, 2);
+    assert.equal(userAccounts.length, 1);
     assert.ok(userAccounts.every(userAccount => {
       return userAccount.account.author.toBase58() === authorPublicKey.toBase58()
     }));
@@ -185,7 +154,7 @@ describe('actium', () => {
     // 'storeVessel' instruction execution
     const vessel = anchor.web3.Keypair.generate();
     await program.rpc.storeVessel(
-      'vessel #001', 
+      'John Doe', 
       '001001001',
       'Elk, a tanker vessel that belongs to maersk shipping company',
       'DNV',
@@ -203,68 +172,10 @@ describe('actium', () => {
     
     // making sure vessel account has valid data
     assert.equal(vesselAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
-    assert.equal(vesselAccount.vesselName, 'vessel #001');
+    assert.equal(vesselAccount.vesselName, 'John Doe');
     assert.equal(vesselAccount.imoNumber, '001001001');
     assert.equal(vesselAccount.vesselDescription, 'Elk, a tanker vessel that belongs to maersk shipping company');
     assert.equal(vesselAccount.shipCompany, 'DNV');
-    assert.ok(vesselAccount.timestamp);
-  });
-
-  it('can store a new vessel without a name', async () => {
-    // 'storeVessel' instruction execution
-    const vessel = anchor.web3.Keypair.generate();
-    await program.rpc.storeVessel(
-      '', 
-      '002002002',
-      'Echante',
-      'MORIS',
-      {
-        accounts: {
-          vessel: vessel.publicKey,
-          author: program.provider.wallet.publicKey,
-          systemProgram: anchor.web3.SystemProgram.programId
-        },
-        signers: [vessel]
-      }
-    );
-    // fetching account details of the created vessel
-    const vesselAccount = await program.account.vessel.fetch(vessel.publicKey);
-    
-    // making sure vessel account has valid data
-    assert.equal(vesselAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
-    assert.equal(vesselAccount.vesselName, '');
-    assert.equal(vesselAccount.imoNumber, '002002002');
-    assert.equal(vesselAccount.vesselDescription, 'Echante');
-    assert.equal(vesselAccount.shipCompany, 'MORIS');
-    assert.ok(vesselAccount.timestamp);
-  });
-
-  it('can store a new vessel without a imo number', async () => {
-    // 'storeVessel' instruction execution
-    const vessel = anchor.web3.Keypair.generate();
-    await program.rpc.storeVessel(
-      'vessel #003', 
-      '',
-      'Jo Jo',
-      'Maeserk', 
-      {
-        accounts: {
-          vessel: vessel.publicKey,
-          author: program.provider.wallet.publicKey,
-          systemProgram: anchor.web3.SystemProgram.programId
-        },
-        signers: [vessel]
-      }
-    );
-    // fetching account details of the created vessel
-    const vesselAccount = await program.account.vessel.fetch(vessel.publicKey);
-    
-    // making sure vessel account has valid data
-    assert.equal(vesselAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
-    assert.equal(vesselAccount.vesselName, 'vessel #003');
-    assert.equal(vesselAccount.imoNumber, '');
-    assert.equal(vesselAccount.vesselDescription, 'Jo Jo');
-    assert.equal(vesselAccount.shipCompany, 'Maeserk');
     assert.ok(vesselAccount.timestamp);
   });
 
@@ -277,7 +188,7 @@ describe('actium', () => {
     // 'storeVessel' instruction execution for the new user
     const vessel = anchor.web3.Keypair.generate();
     await program.rpc.storeVessel(
-      'vessel #004',
+      'McBoat',
       '003003003',
       'Odysseus, bulk career that belongs to danver shipping company',
       'Maeserk',
@@ -295,7 +206,7 @@ describe('actium', () => {
 
     // making sure vessel account has valid data
     assert.equal(vesselAccount.author.toBase58(), newUser.publicKey.toBase58());
-    assert.equal(vesselAccount.vesselName, 'vessel #004');
+    assert.equal(vesselAccount.vesselName, 'McBoat');
     assert.equal(vesselAccount.imoNumber, '003003003');
     assert.equal(vesselAccount.vesselDescription, 'Odysseus, bulk career that belongs to danver shipping company');
     assert.equal(vesselAccount.shipCompany, 'Maeserk');
@@ -353,7 +264,7 @@ describe('actium', () => {
 
   it('can get all the vessels', async () => {
     const vesselAccounts = await program.account.vessel.all();
-    assert.equal(vesselAccounts.length, 4);
+    assert.equal(vesselAccounts.length, 2);
   })
 
   it('can retrieve vessel account by author', async () => {
@@ -366,7 +277,7 @@ describe('actium', () => {
         }
       }
     ]);
-    assert.equal(vesselAccounts.length, 3);
+    assert.equal(vesselAccounts.length, 1);
     assert.ok(vesselAccounts.every(vesselAccount => {
       return vesselAccount.account.author.toBase58() === authorPublicKey.toBase58()
     }));
@@ -380,14 +291,14 @@ describe('actium', () => {
                     32 + // author public key.
                     8 + // timestamp.
                     4, // string prefix.
-                bytes: bs58.encode(Buffer.from('vessel #003')),
+                bytes: bs58.encode(Buffer.from('John Doe')),
             }
         }
     ]);
 
     assert.equal(vesselAccounts.length, 1);
     assert.ok(vesselAccounts.every(vesselAccount => {
-        return vesselAccount.account.vesselName === 'vessel #003'
+        return vesselAccount.account.vesselName === 'John Doe'
     }))
   });
 
@@ -397,9 +308,9 @@ describe('actium', () => {
     // 'storeCompanyAdminRecord' instruction execution
     const companyAdminRecord = anchor.web3.Keypair.generate();
     await program.rpc.storeCompanyAdminRecord(
-      'propler',
+      'Front Propler',
       '3848',
-      '990',
+      '99550',
       {
         accounts: {
           companyadminrecord: companyAdminRecord.publicKey,
@@ -414,9 +325,9 @@ describe('actium', () => {
 
     // making sure company admin record account has valid data
     assert.equal(companyAdminRecordAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
-    assert.equal(companyAdminRecordAccount.vesselPart, 'propler');
+    assert.equal(companyAdminRecordAccount.vesselPart, 'Front Propler');
     assert.equal(companyAdminRecordAccount.vesselPartSerialKey, '3848');
-    assert.equal(companyAdminRecordAccount.vesselImoFkey, '990');
+    assert.equal(companyAdminRecordAccount.vesselImoFkey, '99550');
     assert.ok(companyAdminRecordAccount.timestamp);
   });
 
@@ -429,9 +340,9 @@ describe('actium', () => {
     // 'storeCompanyAdminRecord' instruction execution
     const companyAdminRecord = anchor.web3.Keypair.generate();
     await program.rpc.storeCompanyAdminRecord(
-      'engine',
+      'Lower Engine',
       '1123',
-      '4903',
+      '4903ERC',
      {
        accounts: {
          companyadminrecord: companyAdminRecord.publicKey,
@@ -446,9 +357,9 @@ describe('actium', () => {
 
     // making sure company admin record account has valid data
     assert.equal(companyAdminRecordAccount.author.toBase58(), newUser.publicKey.toBase58());
-    assert.equal(companyAdminRecordAccount.vesselPart, 'engine');
+    assert.equal(companyAdminRecordAccount.vesselPart, 'Lower Engine');
     assert.equal(companyAdminRecordAccount.vesselPartSerialKey, '1123');
-    assert.equal(companyAdminRecordAccount.vesselImoFkey, '4903');
+    assert.equal(companyAdminRecordAccount.vesselImoFkey, '4903ERC');
     assert.ok(companyAdminRecordAccount.timestamp);
   });
 
@@ -479,9 +390,10 @@ describe('actium', () => {
     // 'storeValidatorRecord' instruction execution
     const validatorRecord = anchor.web3.Keypair.generate();
     await program.rpc.storeValidatorRecord(
-      'ship superintendent',
-      'yes',
+      'Yes',
       'maintained the vessel propler correctly',
+      'ship_superintendent',
+      '001001001',
       {
         accounts : {
           validatorrecord: validatorRecord.publicKey,
@@ -496,9 +408,10 @@ describe('actium', () => {
 
    // making sure company admin record account has valid data
    assert.equal(validatorRecordAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
-   assert.equal(validatorRecordAccount.validatorDesignation, 'ship superintendent');
-   assert.equal(validatorRecordAccount.validated, 'yes');
+   assert.equal(validatorRecordAccount.vApproval, 'Yes');
    assert.equal(validatorRecordAccount.vComment, 'maintained the vessel propler correctly');
+   assert.equal(validatorRecordAccount.vDesignation, 'ship_superintendent');
+   assert.equal(validatorRecordAccount.vesselImoFkey, '001001001');
    assert.ok(validatorRecordAccount.timestamp);
   });
 
@@ -508,11 +421,10 @@ describe('actium', () => {
     // 'storeServiceProviderRecord' instruction execution
     const serviceProviderRecord = anchor.web3.Keypair.generate();
     await program.rpc.storeServiceProviderRecord(
-      'HKS',
-      '#432 123',
-      'Durable',
+      'A prodcut from top ship manufacture',
       '10/10/2022',
-      '309123',
+      '9032442',
+      '3848',
       {
         accounts : {
           serviceproviderrecord: serviceProviderRecord.publicKey,
@@ -527,11 +439,10 @@ describe('actium', () => {
 
    // making sure company admin record account has valid data
    assert.equal(serviceProviderRecordAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
-   assert.equal(serviceProviderRecordAccount.providerName, 'HKS');
-   assert.equal(serviceProviderRecordAccount.partId, '#432 123');
-   assert.equal(serviceProviderRecordAccount.partDescription, 'Durable');
+   assert.equal(serviceProviderRecordAccount.partDescription, 'A prodcut from top ship manufacture');
    assert.equal(serviceProviderRecordAccount.datePurchased, '10/10/2022');
-   assert.equal(serviceProviderRecordAccount.warrantyCode, '309123');
+   assert.equal(serviceProviderRecordAccount.warrantyCode, '9032442');
+   assert.equal(serviceProviderRecordAccount.vesselPartPublicKeyFkey, '3848');
    assert.ok(serviceProviderRecordAccount.timestamp);
   });
 
@@ -541,11 +452,9 @@ describe('actium', () => {
     // 'storeInspectorRecord' instruction execution
     const inspectorRecord = anchor.web3.Keypair.generate();
     await program.rpc.storeInspectorRecord(
-      'Manul',
-      'yes',
-      'have to do more repairs',
-      'Batch 1',
-      '990',
+      'Have to do more repairs',
+      'Batch 4 and 5',
+      '3848',
       {
         accounts : {
           inspectorrecord: inspectorRecord.publicKey,
@@ -560,11 +469,9 @@ describe('actium', () => {
 
     // making sure inspector record account has valid data
     assert.equal(inspectorRecordAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
-    assert.equal(inspectorRecordAccount.inspectorName, 'Manul');
-    assert.equal(inspectorRecordAccount.inspected, 'yes');
-    assert.equal(inspectorRecordAccount.iComment, 'have to do more repairs');
-    assert.equal(inspectorRecordAccount.maintenanceBatch, 'Batch 1');
-    assert.equal(inspectorRecordAccount.vesselPartPublicKeyFkey, '990');
+    assert.equal(inspectorRecordAccount.iComment, 'Have to do more repairs');
+    assert.equal(inspectorRecordAccount.maintenanceBatch, 'Batch 4 and 5');
+    assert.equal(inspectorRecordAccount.vesselPartPublicKeyFkey, '3848');
     assert.ok(inspectorRecordAccount.timestamp);
   });
 
@@ -574,10 +481,10 @@ describe('actium', () => {
     // 'storeDeliveryServiceRecord' instruction execution
     const deliveryServiceRecord = anchor.web3.Keypair.generate();
     await program.rpc.storeDeliveryServiceRecord(
-      'New Line',
       'Colombo Port',
       '12/12/2022',
-      'UOA12',
+      'UOA12 Warehouse',
+      '1123',
       {
         accounts : {
           deliveryservicerecord: deliveryServiceRecord.publicKey,
@@ -592,11 +499,38 @@ describe('actium', () => {
 
     // making sure delivery service record account has valid data
     assert.equal(deliveryServiceRecordAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
-    assert.equal(deliveryServiceRecordAccount.serviceName, 'New Line');
     assert.equal(deliveryServiceRecordAccount.deliveredAddress, 'Colombo Port');
     assert.equal(deliveryServiceRecordAccount.deliveredDate, '12/12/2022');
-    assert.equal(deliveryServiceRecordAccount.warehouse, 'UOA12');
+    assert.equal(deliveryServiceRecordAccount.warehouse, 'UOA12 Warehouse');
+    assert.equal(deliveryServiceRecordAccount.vesselPartPublicKeyFkey, '1123');
     assert.ok(deliveryServiceRecordAccount.timestamp);
+  });
+
+  /* SEAWORTHINESS RECORD TESTS */
+
+  it('can store a new seaworthiness record', async () => {
+    // 'storeSeaworthinessRecord' instruction execution
+    const seaworthinessRecord = anchor.web3.Keypair.generate();
+    await program.rpc.storeSeaworthinessRecord(
+      '80',
+      '003003003',
+      {
+        accounts : {
+          seaworthinessrecord: seaworthinessRecord.publicKey,
+          author: program.provider.wallet.publicKey,
+          systemProgram: anchor.web3.SystemProgram.programId
+        },
+        signers: [seaworthinessRecord]
+      }
+    );
+    // fetching account details of the created delivery service record
+    const seaworthinessRecordAccount = await program.account.seaworthinessRecord.fetch(seaworthinessRecord.publicKey);
+
+    // making sure delivery service record account has valid data
+    assert.equal(seaworthinessRecordAccount.author.toBase58(), program.provider.wallet.publicKey.toBase58());
+    assert.equal(seaworthinessRecordAccount.seaworthiness, '80');
+    assert.equal(seaworthinessRecordAccount.vesselImoFkey, '003003003');
+    assert.ok(seaworthinessRecordAccount.timestamp);
   });
 
 });
