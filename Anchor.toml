@@ -1,5 +1,5 @@
 [programs.localnet]
-actium = "Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS"
+actium = "4MzsanEXKmTtjA3t9eLDC7YUfAyf8Wp9m9vTKTvPSSqL"
 
 [registry]
 url = "https://anchor.projectserum.com"
@@ -10,3 +10,5 @@ wallet = "/home/dinu86/.config/solana/id.json"
 
 [scripts]
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+allocate-idl = "mkdir -p app/src && cp target/idl/actium.json app/src/idl.json && echo 'idl compied to new location successfully'"
+display-keypair="solana address -k target/deploy/actium-keypair.json"

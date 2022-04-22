@@ -1,0 +1,325 @@
+.App {
+  text-align: center;
+  font-family: 'Jost', sans-serif;
+  overflow-y: hidden;
+}
+a:hover {
+  text-decoration: none;
+}
+
+.box-container {
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+.main-box {
+  position: relative;
+}
+.content-height {
+  height: 70vh;
+  overflow-y: scroll;
+}
+
+/* table */
+.table {
+  width: 87vw;
+  margin-left: auto;
+  margin-right: auto;
+  background: #FFFFFF;
+  border-radius: 25px;
+  border: none;
+}
+.scrollable-table {
+  position: relative;
+  height: 65vh;
+  overflow: scroll;
+  overflow-x: hidden;
+}
+.table-heading {
+  border-top: none !important;
+  border-bottom: 2px solid #000000 !important;
+}
+.maintenance-table {
+  width: 87vw;
+  margin-left: auto;
+  margin-right: auto;
+  background-image: linear-gradient(180deg, #19201F 0%, #02090A 100%);
+  color: #FFF;
+  border-radius: 10px;
+  border: none;
+}
+.maintenance-table-heading {
+  border-top: none !important;
+  border-bottom: 2px solid #FFFFFF !important;
+}
+
+/* alignment */
+.primary-container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+}
+.record-container {
+  display: flex;
+  width: 100vw;
+  height: 0;
+}
+.main-center-container {
+  justify-content: center;
+  align-items: center;
+  margin: 10rem 0 5rem 0;
+}
+
+.main-center-container-sm {
+  justify-content: center;
+  align-items: center;
+}
+
+.inline-row {
+  display: inline-flex;
+}
+
+/* cards */
+.primary-card {
+  background: #FFFFFF;
+  width: 700px;
+  margin: auto;
+  border-radius: 25px;
+}
+.secondary-card {
+  background-image: linear-gradient(180deg, #066163 0%, #191919 100%);
+  border-radius: 25px;
+  color: #FFFFFF;
+}
+.ternary-card {
+  background-image: linear-gradient(180deg, #163E46 0%, #19201F 100%);
+  border-radius: 25px;
+  color: #FFFFFF;
+}
+.card-white {
+  background: #FFFFFF;
+  margin: auto;
+  min-height: 100vh;
+  border-radius: 25px;
+}
+.card-black {
+  background: #1B1A17;
+  margin: auto;
+  min-height: 100vh;
+  border-radius: 25px;
+}
+.card-grey {
+  background-image: linear-gradient(180deg, #e6e6e6 0%, #dfdfdb 100%);
+  border-radius: 10px;
+  min-height: 25vh;
+}
+.card-zinc {
+  background-image: linear-gradient(180deg, rgba(253,254,253,1) 0%, rgba(236,236,236,1) 100%);
+  border-radius: 10px;
+  border: 1px solid #cecdcd;
+  min-height: 25vh;
+}
+.maintenance-record-card {
+  background-image: linear-gradient(180deg, #19201F 0%, #02090A 100%);
+  border-radius: 10px;
+  min-height: 33vh;
+  color: #FFFFFF;
+}
+.maintenance-part-card {
+  border: 1px solid #417D7A;
+  border-radius: 10px;
+  min-height: 20vh;
+}
+.supply-chain-card {
+  border: 1px solid #F5DEB3;
+  border-radius: 10px;
+  min-height: 33vh;
+}
+.service-provider-card {
+  border: 1px solid #24CA97;
+  border-radius: 10px;
+  min-height: 33vh;
+}
+.delivery-service-card {
+  border: 1px solid #B2D430;
+  border-radius: 10px;
+  min-height: 33vh;
+}
+
+
+/* text */
+.landing-text {
+  font-size: 3rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+.primary-text {
+  font-size: 2rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+.subheading-text {
+  font-size: 1.4rem;
+}
+.bold-text {
+  font-weight: 500;
+}
+.color-white {
+  color: #FFFFFF;
+}
+.color-wheat {
+  color: #F5DEB3;
+}
+.burn-orange-color {
+  color: #FF4C29;
+}
+.dark-navy-color {
+  color: #4B6587;;
+}
+.teal-color {
+  color: #24CA97;
+}
+.green-color {
+  color: #B2D430;
+}
+.error-text {
+  color: #DA1212;
+}
+.error-msg {
+  background: #DA1212;
+  text-transform: uppercase;
+  color: #000;
+  border: none;
+  padding: 5px 15px 5px 15px;
+}
+.error-msg-sm-bdr {
+  background: #DA1212;
+  text-transform: uppercase;
+  color: #000;
+  border-radius: 25px;
+  padding: 5px 15px 5px 15px;
+}
+
+/* buttons */
+.actium-main-button {
+  cursor: pointer !important;
+  background: #29707E;
+  text-transform: uppercase;
+  color: #FFF;
+  border: none;
+  padding: 5px 15px 5px 15px;
+}
+.actium-main-button:hover {
+  background: #15383E;
+  transition-duration: 0.6s;
+}
+.actium-secondary-button {
+  cursor: pointer !important;
+  background: #FFFFFF;
+  border: 1px solid #000000;
+  text-transform: uppercase;
+  color: #000;
+  border-radius: 25px;
+  padding: 5px 15px 5px 15px;
+}
+.actium-secondary-button:hover {
+  background: #000000;
+  color: #FFF;
+  transition-duration: 0.6s;
+}
+.actium-wheat-button {
+  cursor: pointer !important;
+  background: #F5F5F5;
+  border: none;
+  text-transform: uppercase;
+  color: #000;
+  border-radius: 25px;
+  padding: 5px 15px 5px 15px;
+}
+.actium-wheat-button:hover {
+  background: #F5DEB3;
+  transition-duration: 0.6s;
+}
+.actium-green-button {
+  cursor: pointer !important;
+  background: #F5F5F5;
+  border: none;
+  text-transform: uppercase;
+  color: #000;
+  border-radius: 25px;
+  padding: 5px 15px 5px 15px;
+}
+.actium-green-button:hover {
+  background: #B2D430;
+  transition-duration: 0.6s;
+}
+.actium-orange-button {
+  cursor: pointer !important;
+  background: #F5F5F5;
+  border: none;
+  text-transform: uppercase;
+  color: #000;
+  border-radius: 25px;
+  padding: 5px 15px 5px 15px;
+}
+.actium-orange-button:hover {
+  background: #FF4C29;
+  transition-duration: 0.6s;
+}
+.actium-maintenance-button {
+  cursor: pointer !important;
+  background: #F5F5F5;
+  border: none;
+  text-transform: uppercase;
+  color: #000;
+  border-radius: 25px;
+  padding: 5px 15px 5px 15px;
+}
+.actium-maintenance-button:hover {
+  background: #24CA97;
+  transition-duration: 0.6s;
+}
+
+/* modal styles*/
+.modal-background {
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+  background-color: rgb(224, 224, 224);
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-container {
+  width: 600px;
+  border-radius: 12px;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 25px;
+}
+
+/* wallet styles */
+
+.wallet-container {
+  display: flex;
+  justify-content: center;
+}
+.wallet-adapter-button-trigger {
+  background: #29707E !important;
+  color: #FFF;
+  border-radius: 0px !important;
+  padding: 7px 15px 7px 15px !important;
+  display: flex !important;
+  font-family: 'Jost', sans-serif !important;
+  font-size: initial;
+  font-weight: inherit !important;
+  height: inherit !important;
+  line-height: inherit !important;
+  text-transform: uppercase;
+}
+.wallet-adapter-button:hover {
+  background: #15383E !important;
+}
+
