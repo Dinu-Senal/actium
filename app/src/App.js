@@ -37,7 +37,7 @@ function App() {
             <>
                 <BrowserRouter>
                   <Routes>
-                    <Route path="/login" element={<LoginPage wallet={wallet}/>} />
+                    <Route path="/" element={<LoginPage wallet={wallet}/>} />
                     <Route path="/home" element={<HomePage wallet={wallet}/>} />
                     <Route path="/register" element={<RegisterPage wallet={wallet}/>} />
                     <Route path="/vessel" element={<VesselPage wallet={wallet}/>} />
