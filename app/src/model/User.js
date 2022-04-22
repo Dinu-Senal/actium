@@ -31,7 +31,7 @@ export class User {
     }
 
     get created_at() {
-        return dayjs.unix(this.timestamp).format('DD/MM/YYYY')
+        return dayjs.unix(this.timestamp).format('DD - MMMM - YYYY')
     }
 
     get created_ago() {

@@ -113,6 +113,12 @@ a:hover {
   border-radius: 10px;
   min-height: 25vh;
 }
+.card-zinc {
+  background-image: linear-gradient(180deg, rgba(253,254,253,1) 0%, rgba(236,236,236,1) 100%);
+  border-radius: 10px;
+  border: 1px solid #cecdcd;
+  min-height: 25vh;
+}
 .maintenance-record-card {
   background-image: linear-gradient(180deg, #19201F 0%, #02090A 100%);
   border-radius: 10px;

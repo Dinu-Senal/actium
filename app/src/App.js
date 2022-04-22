@@ -9,6 +9,7 @@ import { network } from './constants';
 import LoginPage from './components/LoginPage';
 import VesselPage from './components/VesselPage';
 import SupplyChain from './components/SupplyChain';
+import MyAccountPage from './components/MyAccountPage';
 require('@solana/wallet-adapter-react-ui/styles.css');
 
 const wallets = [
@@ -41,6 +42,7 @@ function App() {
                     <Route path="/register" element={<RegisterPage wallet={wallet}/>} />
                     <Route path="/vessel" element={<VesselPage wallet={wallet}/>} />
                     <Route path="/supplychain" element={<SupplyChain wallet={wallet}/>} />
+                    <Route path="/account" element={<MyAccountPage wallet={wallet} />} />
                   </Routes>
                 </BrowserRouter>
             </>

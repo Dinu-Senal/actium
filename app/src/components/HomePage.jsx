@@ -46,7 +46,7 @@ const HomePage = ({ wallet }) => {
                     </button>
                     <button 
                         className="actium-main-button ml-2" 
-                        onClick={() => navigate('/account?key=${}')}>
+                        onClick={() => navigate(`/account?user_key=${userKey}`)}>
                             My Account
                     </button>
                     {(userType === "maintenance_admin") && (
