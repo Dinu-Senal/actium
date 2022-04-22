@@ -7,7 +7,8 @@ export const workspace = {
 }
 
 export const network = {
-    local: "http://127.0.0.1:8899"
+    local: "http://127.0.0.1:8899",
+    devnet: "https://api.devnet.solana.com"
 }
 
 export const opts = {

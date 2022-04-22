@@ -1,11 +1,14 @@
 [programs.localnet]
 actium = "4MzsanEXKmTtjA3t9eLDC7YUfAyf8Wp9m9vTKTvPSSqL"
 
+[programs.devnet]
+actium = "4MzsanEXKmTtjA3t9eLDC7YUfAyf8Wp9m9vTKTvPSSqL"
+
 [registry]
 url = "https://anchor.projectserum.com"
 
 [provider]
-cluster = "localnet"
+cluster = "devnet"
 wallet = "/home/dinu86/.config/solana/id.json"
 
 [scripts]
