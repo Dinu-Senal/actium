@@ -74,7 +74,7 @@ const HomePage = ({ wallet }) => {
                                 <th className="table-heading" scope="col">No.</th>
                                 <th className="table-heading" scope="col">Public Key</th>
                                 <th className="table-heading" scope="col">Vessel Name</th>
-                                <th className="table-heading" scope="col">Seaworthiness</th>
+                                <th className="table-heading" scope="col">IMO Number</th>
                                 <th className="table-heading" scope="col">Options</th>
                             </tr>
                         </thead>
@@ -85,7 +85,7 @@ const HomePage = ({ wallet }) => {
                                         <th>{idx+1}</th>
                                         <th>{vessel.key_sliced}</th>
                                         <th>{vessel.vessel_name}</th>
-                                        <th>40%</th>
+                                        <th>{vessel.imo_number}</th>
                                         <th className="pt-0">
                                             <button 
                                                 className="actium-secondary-button ml-2 mt-3" 
@@ -102,6 +102,7 @@ const HomePage = ({ wallet }) => {
             )
         }
     }
+    
     return (
         <div className={`${isModalOpen && "primary-container"} main-center-container-sm`}>
             <div className="landing-text mt-3">Vessel Record</div>
