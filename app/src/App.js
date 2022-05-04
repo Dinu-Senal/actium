@@ -31,6 +31,9 @@ function App() {
                     <div className="ml-2">
                         <WalletMultiButton />
                     </div>
+                    <div className="actium-main-button ml-2">
+                        Download User Manual
+                    </div>
                 </div>
             </div>
         ) : 
