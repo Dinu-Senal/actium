@@ -167,6 +167,9 @@ a:hover {
 .color-white {
   color: #FFFFFF;
 }
+.color-white-imp {
+  color: #FFFFFF !important;
+}
 .color-wheat {
   color: #F5DEB3;
 }

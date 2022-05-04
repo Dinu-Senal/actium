@@ -10,6 +10,7 @@ import LoginPage from './components/LoginPage';
 import VesselPage from './components/VesselPage';
 import SupplyChain from './components/SupplyChain';
 import MyAccountPage from './components/MyAccountPage';
+import userManual from './documents/Actium - User Manual.pdf';
 require('@solana/wallet-adapter-react-ui/styles.css');
 
 const wallets = [
@@ -32,7 +33,7 @@ function App() {
                         <WalletMultiButton />
                     </div>
                     <div className="actium-main-button ml-2">
-                        Download User Manual
+                        <a className="color-white-imp" href={userManual} download>Download User Manual</a>
                     </div>
                 </div>
             </div>
