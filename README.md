@@ -9,10 +9,12 @@ Due to existing incompetent centralized vessel maintenance systems, vessels are 
 # Explore Live Version
 **Note: You need to have phantom wallet extention to login to the web application*
 
+[Actium Website](https://actium.netlify.app)
+
+[Actium User Manual](https://actium.netlify.app/static/media/Actium%20-%20User%20Manual.31193dd8.pdf).
+
 ## Project Tools for this project
 **Note: most of the libraries and frameworks used in this project doesn't run/is not available/not compatible in the windows environment*
-[Actium Website](https://actium.netlify.app)
-[Actium User Manual](https://actium.netlify.app/static/media/Actium%20-%20User%20Manual.31193dd8.pdf)
 
 [Node](https://nodejs.org/en/) - the node package manager was used to maintain packages of the Solana Application + the Client Application. 
 
