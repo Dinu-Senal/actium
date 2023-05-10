@@ -4,9 +4,9 @@
 
 Actium is a Decentralized Application (DApp) built upon the Solana Blockchain for its higher transaction speed, lower gas fees, and elevate the data integrity.
 
-Due to existing incompetent centralized vessel maintenance systems, vessels are prone to get distressed and shipwrecked. Port authorities and other stakeholders have difficulty deciding the vessel's seaworthiness because data is not trustworthy and traceable. Actium will provide a solution for the above drawbacks by developing a decentralized vessel maintenance and procurement supply chain, further increasing the capability of tracing, data immutability, transparency, and security.
+Due to existing incompetent centralized vessel maintenance systems, vessels are prone to get distressed and shipwrecked. Port authorities and other stakeholders have difficulty deciding the vessel's seaworthiness because data is not trustworthy and traceable. Actium provides a solution for the above drawbacks by integrating decentralization concept for vessel maintenance system, further increasing the capability of tracing, data immutability, transparency, and security.
 
-# Explore Live Version
+## Explore Live Version
 **Note: You need to have phantom wallet extention to login to the web application*
 
 [Actium Website](https://actium.netlify.app)
@@ -16,7 +16,7 @@ Due to existing incompetent centralized vessel maintenance systems, vessels are 
 ## Project Tools for this project
 **Note: most of the libraries and frameworks used in this project doesn't run/is not available/not compatible in the windows environment*
 
-[Node](https://nodejs.org/en/) - the node package manager was used to maintain packages of the Solana Application + the Client Application. 
+[Node](https://nodejs.org/en/) - the node package manager was used to maintain packages of the solana application + the client application. 
 
 [Rust Programming Language](https://www.rust-lang.org/tools/install) - the programming language which has been used to develop the DApp.
 
@@ -24,7 +24,7 @@ Due to existing incompetent centralized vessel maintenance systems, vessels are 
 
 [Phantom Wallet](https://phantom.app) - wallet for SOL transactions.
 
-[Anchor Framework](https://project-serum.github.io/anchor/getting-started/introduction.html) - Anchor is a framework for Solana's Sealevel runtime providing several convenient developer tools. 
+[Anchor Framework](https://project-serum.github.io/anchor/getting-started/introduction.html) - anchor is a framework for solana's sealevel runtime providing several convenient developer tools. 
 
 [React JS](https://reactjs.org/) - the frontend/client-side was developed using React JS library.
 
